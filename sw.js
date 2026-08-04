@@ -1,6 +1,6 @@
 // Card Analysis — service worker
 // Bump CACHE when you edit index.html so returning visitors get the update.
-const CACHE = 'the-tarot-v4';
+const CACHE = 'the-tarot-v5';
 const SHELL = [
   './',
   './index.html',
