@@ -1,6 +1,6 @@
 // Card Analysis — service worker
 // Bump CACHE when you edit index.html so returning visitors get the update.
-const CACHE = 'the-tarot-v7';
+const CACHE = 'the-tarot-v9';
 const SHELL = [
   './',
   './index.html',
@@ -9,6 +9,8 @@ const SHELL = [
   './icon-512.png',
   './apple-touch-icon.png',
   './favicon-32.png',
+  './pentagram.png',
+  './mat/cross-mat.png',
   './cards/card_back.png'
 ];
 

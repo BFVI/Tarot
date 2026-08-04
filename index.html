@@ -33,10 +33,13 @@ svg.gl{display:inline-block;vertical-align:-0.16em;}
 
 /* ---------- masthead ---------- */
 header{text-align:center;margin-bottom:22px;}
-.suitLoop{position:relative;width:38px;height:38px;border:1px solid var(--fg);margin:0 auto 14px;}
-.sl-g{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;animation:suitCycle 7.2s infinite;}
-.sl-1{animation-delay:0s;} .sl-2{animation-delay:1.8s;} .sl-3{animation-delay:3.6s;} .sl-4{animation-delay:5.4s;}
-@keyframes suitCycle{0%{opacity:0;transform:scale(.82);}4%{opacity:1;transform:scale(1);}21%{opacity:1;transform:scale(1);}25%{opacity:0;transform:scale(1.12);}100%{opacity:0;}}
+.pentaWrap{width:42px;height:42px;margin:0 auto 14px;}
+.pentaIcon{width:100%;height:100%;display:block;transform-origin:center center;user-select:none;pointer-events:none;}
+@media (hover:none){
+  .pentaIcon{animation:pentaSpin 16s linear infinite;}
+}
+@keyframes pentaSpin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@media (prefers-reduced-motion:reduce){ .pentaIcon{animation:none;} }
 h1{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
    font-size:clamp(38px,13vw,58px);line-height:1;letter-spacing:.01em;}
 .kicker{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-top:9px;line-height:1.7;}
@@ -75,6 +78,8 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .subtle{display:block;width:100%;background:none;border:none;color:var(--fg-dim);font-family:inherit;
   font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:12px 4px 2px;cursor:pointer;text-align:center;}
 .subtle:hover{color:var(--fg);}
+.solo-actions{display:flex;gap:6px;}
+.solo-actions .subtle{width:auto;flex:1;}
 
 /* ---------- interpret tab ---------- */
 .slot{margin-bottom:13px;position:relative;}
@@ -239,17 +244,19 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
   letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);line-height:1.3;}
 @media (prefers-reduced-motion:reduce){ .cardFace{transition:none;} }
 
-/* ---------- home card: static frame + scale-zoom breathing with table shadow ---------- */
-.cardHolder{display:inline-flex;align-items:center;justify-content:center;
-  padding:5px;border:1.5px solid #fff;border-radius:12px;}
+/* ---------- home card: cross mat + scale-zoom breathing with table shadow ---------- */
+.crossStage{position:relative;width:min(90vw,460px);margin:0 auto;}
+.crossImg{display:block;width:100%;height:auto;pointer-events:none;user-select:none;}
+.crossStage .cardSlot{position:absolute;top:32.68%;left:50%;}
 #soloSlot{border-radius:8px;transform-origin:center center;
   animation:cardBreathe 4.6s ease-in-out infinite;}
 @keyframes cardBreathe{
-  0%,100%{ transform:scale(1); box-shadow:0 3px 6px 0 rgba(0,0,0,.6); }
-  50%{ transform:scale(1.08); box-shadow:0 24px 34px 2px rgba(0,0,0,.22); }
+  0%,100%{ transform:translate(-50%,-50%) scale(1); box-shadow:0 3px 6px 0 rgba(0,0,0,.6); }
+  50%{ transform:translate(-50%,-50%) scale(1.08); box-shadow:0 24px 34px 2px rgba(0,0,0,.22); }
 }
 @media (prefers-reduced-motion:reduce){
-  #soloSlot{animation:none; box-shadow:0 3px 6px 0 rgba(0,0,0,.6);}
+  #soloSlot{animation:none; box-shadow:0 3px 6px 0 rgba(0,0,0,.6);
+    transform:translate(-50%,-50%) scale(1);}
 }
 
 /* ---------- quiz ---------- */
@@ -302,8 +309,8 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 <body>
 <div class="shell">
   <header>
-    <div class="suitLoop" aria-hidden="true">
-      <span class="sl-g sl-1"></span><span class="sl-g sl-2"></span><span class="sl-g sl-3"></span><span class="sl-g sl-4"></span>
+    <div class="pentaWrap">
+      <img src="./pentagram.png" class="pentaIcon" id="pentaIcon" alt="">
     </div>
     <h1>The Tarot</h1>
     <div class="kicker">Determine your destiny!<br>Predict your own future!</div>
@@ -315,14 +322,13 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
   <!-- INTERPRET (1 CARD) -->
   <div class="pane on" id="pane-read">
     <div class="panoBg" id="panoBg"></div>
-    <div class="table" id="soloTable">
-      <div class="cardHolder">
-        <div class="cardSlot big" id="soloSlot" data-empty="1">
-          <div class="cardFace back" id="soloBack">
-            <img src="./cards/card_back.png" alt="Card back" loading="lazy">
-          </div>
-          <div class="cardFace front" id="soloFront"></div>
+    <div class="crossStage" id="crossStage">
+      <img src="./mat/cross-mat.png" class="crossImg" alt="" aria-hidden="true">
+      <div class="cardSlot big" id="soloSlot" data-empty="1">
+        <div class="cardFace back" id="soloBack">
+          <img src="./cards/card_back.png" alt="Card back" loading="lazy">
         </div>
+        <div class="cardFace front" id="soloFront"></div>
       </div>
     </div>
     <div class="ac-wrap" style="margin-top:16px;">
@@ -331,7 +337,10 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
       <span class="fakeCaret" aria-hidden="true"></span>
       <div class="ac-list" id="soloList"></div>
     </div>
-    <button class="subtle" id="soloRandom">Random</button>
+    <div class="solo-actions">
+      <button class="subtle" id="soloRandom">Random</button>
+      <button class="subtle" id="soloReset">Reset</button>
+    </div>
     <div id="soloOut"></div>
   </div>
 
@@ -449,15 +458,19 @@ function cardImagePath(card){
   return null;
 }
 function cardPanoPath(card){
-  // Panoramic backgrounds exist for Majors only so far; Minors return null until added.
-  if(card.kind !== 'major') return null;
-  const romanMap={'0':0,'I':1,'II':2,'III':3,'IV':4,'V':5,'VI':6,'VII':7,'VIII':8,'IX':9,'X':10,
-    'XI':11,'XII':12,'XIII':13,'XIV':14,'XV':15,'XVI':16,'XVII':17,'XVIII':18,'XIX':19,'XX':20,'XXI':21};
-  const num = romanMap[card.numeral];
-  if(num === undefined) return null;
-  const padded = String(num).padStart(2,'0');
-  const safeName = card.name.replace(/\s+/g,'_');
-  return `./cards/panoramic/${padded}_${safeName}.jpg`;
+  if(card.kind === 'major'){
+    const romanMap={'0':0,'I':1,'II':2,'III':3,'IV':4,'V':5,'VI':6,'VII':7,'VIII':8,'IX':9,'X':10,
+      'XI':11,'XII':12,'XIII':13,'XIV':14,'XV':15,'XVI':16,'XVII':17,'XVIII':18,'XIX':19,'XX':20,'XXI':21};
+    const num = romanMap[card.numeral];
+    if(num === undefined) return null;
+    const padded = String(num).padStart(2,'0');
+    const safeName = card.name.replace(/\s+/g,'_');
+    return `./cards/panoramic/${padded}_${safeName}.jpg`;
+  } else if(card.kind === 'pip' || card.kind === 'court'){
+    const safeName = card.name.replace(/\s+/g,'_');
+    return `./cards/panoramic/${safeName}.jpg`;
+  }
+  return null;
 }
 
 const EL = mapGlyphs(['Fire','Water','Air','Earth']);
@@ -973,6 +986,14 @@ function setSoloCard(c){
 soloSlot.addEventListener('click', ()=>openPicker(setSoloCard));
 attachAutocomplete(soloInput, document.getElementById('soloList'), setSoloCard);
 document.getElementById('soloRandom').onclick=()=>{ setSoloCard(randomCards(1)[0]); };
+function resetSolo(){
+  soloSlot.classList.remove('flipped');
+  soloFront.innerHTML='';
+  soloInput.value=''; soloInput.dataset.cardid=''; soloInput.classList.remove('invalid');
+  soloOut.innerHTML='';
+  panoBg.classList.remove('on');
+}
+document.getElementById('soloReset').onclick=(e)=>{ pressFx(e.currentTarget); resetSolo(); };
 
 /* ---------- tab: Quiz Me ---------- */
 let quizPool=[], quizCard=null;
@@ -1173,10 +1194,16 @@ document.querySelectorAll('.tab').forEach(t=>{
   };
 });
 
-/* ---------- masthead element loop ---------- */
-['Fire','Water','Air','Earth'].forEach((el,i)=>{
-  document.querySelector('.sl-'+(i+1)).innerHTML = glyph(el, 19);
-});
+/* ---------- masthead pentagram: follows cursor on desktop, spins via CSS on touch ---------- */
+const pentaIcon=document.getElementById('pentaIcon');
+if(window.matchMedia('(hover:hover)').matches){
+  document.addEventListener('mousemove', e=>{
+    const rect=pentaIcon.getBoundingClientRect();
+    const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+    const angle=Math.atan2(e.clientY-cy, e.clientX-cx)*180/Math.PI;
+    pentaIcon.style.transform=`rotate(${angle-90}deg)`;
+  });
+}
 
 buildSpreadUI();
 try{ soloInput.focus({preventScroll:true}); }catch(e){ soloInput.focus(); }
