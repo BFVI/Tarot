@@ -33,8 +33,8 @@ svg.gl{display:inline-block;vertical-align:-0.16em;}
 
 /* ---------- masthead ---------- */
 header{text-align:center;margin-bottom:22px;}
-.pentaWrap{width:42px;height:42px;margin:0 auto 14px;}
-.pentaIcon{width:100%;height:100%;display:block;transform-origin:center center;user-select:none;pointer-events:none;}
+.pentaWrap{width:42px;height:42px;margin:0 auto 14px;cursor:pointer;}
+.pentaIcon{width:100%;height:100%;display:block;transform-origin:center center;user-select:none;}
 @media (hover:none){
   .pentaIcon{animation:pentaSpin 16s linear infinite;}
 }
@@ -43,13 +43,12 @@ header{text-align:center;margin-bottom:22px;}
 h1{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
    font-size:clamp(38px,13vw,58px);line-height:1;letter-spacing:.01em;}
 .kicker{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-top:9px;line-height:1.7;}
-.rule{border-top:1px solid var(--line);margin-top:14px;}
 
 /* ---------- shared controls ---------- */
 .ac-wrap{position:relative;}
-.ac-input{width:100%;background:#000;color:var(--fg);border:1px solid var(--line-dim);padding:11px 12px;font-family:inherit;font-size:16px;caret-color:#fff;}
-.fakeCaret{position:absolute;left:13px;top:50%;width:2px;height:17px;background:#fff;
-  transform:translateY(-50%);pointer-events:none;animation:caretBlink 1s step-end infinite;}
+.ac-input{width:100%;background:rgba(0,0,0,.82);color:var(--fg);border:1px solid var(--line-dim);padding:11px 12px;font-family:inherit;font-size:16px;caret-color:#fff;text-align:center;}
+.fakeCaret{position:absolute;left:50%;top:50%;width:2px;height:17px;background:#fff;
+  transform:translate(-50%,-50%);pointer-events:none;animation:caretBlink 1s step-end infinite;}
 .ac-input:not(:placeholder-shown) ~ .fakeCaret{display:none;}
 .ac-wrap:focus-within .fakeCaret{display:none;}
 @keyframes caretBlink{ 0%,50%{opacity:1;} 50.01%,100%{opacity:0;} }
@@ -78,7 +77,8 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .subtle{display:block;width:100%;background:none;border:none;color:var(--fg-dim);font-family:inherit;
   font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:12px 4px 2px;cursor:pointer;text-align:center;}
 .subtle:hover{color:var(--fg);}
-.solo-actions{display:flex;gap:6px;}
+.solo-actions{display:flex;gap:8px;}
+.solo-actions button.act{width:auto;flex:1;}
 .solo-actions .subtle{width:auto;flex:1;}
 
 /* ---------- interpret tab ---------- */
@@ -160,9 +160,9 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .reading p{font-size:13.5px;line-height:1.75;color:var(--fg);}
 
 /* ---------- solo card: combined black info block ---------- */
-.soloInfo{background:#000;border:1px solid var(--line-dim);border-radius:12px;padding:22px 16px;margin-top:20px;}
+.soloInfo{background:rgba(0,0,0,.82);border:1px solid var(--line-dim);border-radius:12px;padding:22px 16px;margin-top:20px;width:168px;margin-left:auto;margin-right:auto;}
 .soloInfo-title{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
-  font-size:clamp(26px,8vw,36px);text-align:center;line-height:1.15;margin-bottom:3px;}
+  font-size:clamp(38px,13vw,58px);text-align:center;line-height:1.05;margin-bottom:8px;}
 .soloInfo-subtitle{text-align:center;font-size:11px;color:var(--fg-dim);letter-spacing:.1em;
   text-transform:uppercase;margin-bottom:18px;}
 .soloInfo-attrs{justify-content:center;margin-bottom:18px;}
@@ -171,57 +171,6 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .soloInfo-meaning{font-size:14.5px;font-weight:600;line-height:1.6;margin-bottom:20px;}
 .soloInfo-reading{margin-bottom:0;}
 .reading p + p{margin-top:12px;}
-
-/* ---------- draw animation ---------- */
-.animWrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 0 12px;min-height:250px;}
-.stage{position:relative;width:116px;height:178px;perspective:1000px;}
-.deckStack{position:absolute;inset:0;}
-.deckStack i{position:absolute;inset:0;border:1px solid var(--line-dim);border-radius:6px;}
-.deckStack i:nth-child(1){transform:translate(3px,4px);}
-.deckStack i:nth-child(2){transform:translate(6px,8px);}
-.deckStack i:nth-child(3){transform:translate(9px,12px);opacity:.5;}
-.risingCard{position:absolute;inset:0;transform-style:preserve-3d;animation:riseFlip 1.2s cubic-bezier(.22,.9,.28,1) forwards;}
-.rc-face{position:absolute;inset:0;border-radius:6px;border:1px solid var(--fg);background:#000;
-  backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center;}
-.rc-back{background-image:repeating-linear-gradient(45deg,#1a1a1a 0 2px,#000 2px 9px);}
-.rc-front{transform:rotateY(180deg);}
-.rc-front svg.gl{width:46px;height:46px;}
-@keyframes riseFlip{
-  0%{transform:translateY(28px) scale(.5) rotateY(0deg);opacity:0;}
-  16%{opacity:1;}
-  46%{transform:translateY(-8px) scale(1) rotateY(0deg);}
-  58%{transform:translateY(-8px) scale(1) rotateY(180deg);}
-  100%{transform:translateY(-8px) scale(1) rotateY(180deg);opacity:1;}
-}
-.fx{position:absolute;left:50%;top:50%;pointer-events:none;}
-.fx i{position:absolute;left:0;top:0;opacity:0;}
-/* Fire — embers licking upward */
-.fx-fire i{width:3px;height:8px;background:linear-gradient(180deg,#fff,transparent);
-  animation:ember .95s ease-out forwards;animation-delay:var(--d);}
-@keyframes ember{0%{transform:translate(-50%,-50%) translateY(0) scaleY(.5);opacity:.95;}
-  100%{transform:translate(-50%,-50%) translate(var(--dx),-72px) scaleY(1.7);opacity:0;}}
-/* Water — expanding ripple rings */
-.fx-water i{width:16px;height:16px;border:1px solid #fff;border-radius:50%;
-  animation:ripple 1.15s ease-out forwards;animation-delay:var(--d);}
-@keyframes ripple{0%{transform:translate(-50%,-50%) scale(.3);opacity:.9;}
-  100%{transform:translate(-50%,-50%) scale(5.2);opacity:0;}}
-/* Air — sweeping horizontal streaks */
-.fx-air i{height:1px;width:34px;background:linear-gradient(90deg,transparent,#fff,transparent);
-  animation:gust .85s ease-out forwards;animation-delay:var(--d);}
-@keyframes gust{0%{transform:translate(-50%,-50%) translate(-46px,var(--dy)) scaleX(.3);opacity:0;}
-  35%{opacity:.95;} 100%{transform:translate(-50%,-50%) translate(70px,var(--dy)) scaleX(1.5);opacity:0;}}
-/* Earth — motes settling downward */
-.fx-earth i{width:3px;height:3px;background:#fff;
-  animation:settle 1.15s cubic-bezier(.3,.7,.5,1) forwards;animation-delay:var(--d);}
-@keyframes settle{0%{transform:translate(-50%,-50%) translate(var(--dx),-14px);opacity:.95;}
-  100%{transform:translate(-50%,-50%) translate(var(--dx),56px);opacity:0;}}
-/* Majors — radiant burst */
-.fx-major i{width:1px;height:22px;background:linear-gradient(180deg,#fff,transparent);transform-origin:50% 0;
-  animation:radiate .9s ease-out forwards;animation-delay:var(--d);}
-@keyframes radiate{0%{transform:translate(-50%,-50%) rotate(var(--a)) translateY(6px) scaleY(.3);opacity:.95;}
-  100%{transform:translate(-50%,-50%) rotate(var(--a)) translateY(62px) scaleY(1.5);opacity:0;}}
-.animLabel{margin-top:16px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);}
-@media (prefers-reduced-motion:reduce){ .risingCard{animation:none;transform:rotateY(180deg);opacity:1;} .fx i{animation:none;opacity:0;} }
 
 /* ---------- tabbar (prominent bordered buttons) ---------- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#000;
@@ -240,9 +189,9 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){ .panoBg{transition:none;} }
 
 /* ---------- card slot (shared: solo + quiz + spread positions) ---------- */
-.table{display:flex;justify-content:center;padding:6px 0 4px;}
 .cardSlot{position:relative;width:150px;height:250px;perspective:1200px;cursor:pointer;flex:0 0 auto;}
 .cardSlot.big{width:168px;height:280px;}
+.mainCol{width:168px;margin-left:auto;margin-right:auto;}
 .cardFace{position:absolute;inset:0;border-radius:8px;border:1px solid var(--line-dim);overflow:hidden;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .55s cubic-bezier(.3,.85,.3,1);
   background:#000;display:flex;align-items:center;justify-content:center;}
@@ -256,20 +205,19 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
   letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);line-height:1.3;}
 @media (prefers-reduced-motion:reduce){ .cardFace{transition:none;} }
 
-/* ---------- home card: cross mat + scale-zoom breathing with table shadow ---------- */
-.crossStage{position:relative;width:100%;max-width:300px;height:340px;margin:0 auto;}
-.crossImg{position:absolute;top:50%;left:50%;width:224px;height:224px;
-  transform:translate(-50%,-50%);pointer-events:none;user-select:none;opacity:.92;}
-.crossStage .cardSlot{position:absolute;top:50%;left:50%;}
-#soloSlot{border-radius:8px;transform-origin:center center;
+/* ---------- floating card: scale-zoom breathing with table shadow ---------- */
+/* .cardMount is shared by every hovering card (solo + quiz) so this animation can never
+   be forgotten on one of them — it was previously ID-scoped, which was the root cause of
+   the Quiz Me card floating in the wrong place (no transform meant no centering at all). */
+.cardStage{display:flex;justify-content:center;padding:38px 0 32px;}
+.cardMount{border-radius:8px;transform-origin:center center;
   animation:cardBreathe 4.6s ease-in-out infinite;}
 @keyframes cardBreathe{
-  0%,100%{ transform:translate(-50%,-50%) scale(1); box-shadow:0 3px 6px 0 rgba(0,0,0,.6); }
-  50%{ transform:translate(-50%,-50%) scale(1.08); box-shadow:0 24px 34px 2px rgba(0,0,0,.22); }
+  0%,100%{ transform:scale(1); box-shadow:0 3px 6px 0 rgba(0,0,0,.6); }
+  50%{ transform:scale(1.08); box-shadow:0 24px 34px 2px rgba(0,0,0,.22); }
 }
 @media (prefers-reduced-motion:reduce){
-  #soloSlot{animation:none; box-shadow:0 3px 6px 0 rgba(0,0,0,.6);
-    transform:translate(-50%,-50%) scale(1);}
+  .cardMount{animation:none; box-shadow:0 3px 6px 0 rgba(0,0,0,.6); transform:scale(1);}
 }
 
 /* ---------- quiz ---------- */
@@ -321,12 +269,11 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 <body>
 <div class="shell">
   <header>
-    <div class="pentaWrap">
+    <div class="pentaWrap" id="pentaWrap">
       <img src="./pentagram.png" class="pentaIcon" id="pentaIcon" alt="">
     </div>
     <h1>The Tarot</h1>
     <div class="kicker">Determine your destiny!<br>Predict your own future!</div>
-    <div class="rule"></div>
   </header>
 
   <div id="installHint"></div>
@@ -334,24 +281,23 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
   <!-- INTERPRET (1 CARD) -->
   <div class="pane on" id="pane-read">
     <div class="panoBg" id="panoBg"></div>
-    <div class="crossStage" id="crossStage">
-      <img src="./pentagram.png" class="crossImg" alt="" aria-hidden="true">
-      <div class="cardSlot big" id="soloSlot" data-empty="1">
+    <div class="cardStage">
+      <div class="cardSlot big cardMount" id="soloSlot" data-empty="1">
         <div class="cardFace back" id="soloBack">
           <img src="./cards/card_back.png" alt="Card back" loading="lazy">
         </div>
         <div class="cardFace front" id="soloFront"></div>
       </div>
     </div>
-    <div class="ac-wrap" style="margin-top:16px;">
+    <div class="ac-wrap mainCol" style="margin-top:16px;">
       <input type="text" id="soloInput" class="ac-input" autocomplete="off" spellcheck="false" autofocus
-             placeholder="Name a card, or type a number…" data-cardid="" enterkeyhint="go">
+             placeholder="Spell Your Fate" data-cardid="" enterkeyhint="go">
       <span class="fakeCaret" aria-hidden="true"></span>
       <div class="ac-list" id="soloList"></div>
     </div>
-    <div class="solo-actions">
-      <button class="subtle" id="soloRandom">Random</button>
-      <button class="subtle" id="soloReset">Reset</button>
+    <div class="solo-actions mainCol">
+      <button class="act ghost" id="soloRandom">Random</button>
+      <button class="act ghost" id="soloReset">Reset</button>
     </div>
     <div id="soloOut"></div>
   </div>
@@ -360,20 +306,23 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
   <div class="pane" id="pane-quiz">
     <div class="panoBg" id="quizPanoBg"></div>
     <div class="quiz-count" id="quizCount"></div>
-    <div class="crossStage">
-      <img src="./pentagram.png" class="crossImg" alt="" aria-hidden="true">
-      <div class="cardSlot big" id="quizSlot" data-empty="1">
+    <div class="cardStage">
+      <div class="cardSlot big cardMount" id="quizSlot" data-empty="1">
         <div class="cardFace back" id="quizBack">
           <img src="./cards/card_back.png" alt="Card back" loading="lazy">
         </div>
         <div class="cardFace front" id="quizFront"></div>
       </div>
     </div>
-    <button class="act primary" id="quizStart">Start</button>
-    <button class="act primary" id="quizReveal" hidden>Reveal Meaning</button>
+    <div class="mainCol" style="margin-top:16px;">
+      <button class="act primary" id="quizStart">Start</button>
+      <button class="act primary" id="quizReveal" hidden>Reveal Meaning</button>
+    </div>
     <div id="quizMeaning"></div>
-    <button class="act ghost" id="quizDrawAgain" hidden>Draw Again</button>
-    <button class="subtle" id="quizReshuffle">Reshuffle deck</button>
+    <div class="mainCol">
+      <button class="act ghost" id="quizDrawAgain" hidden style="margin-bottom:8px;">Draw Again</button>
+      <button class="act ghost" id="quizReshuffle">Reshuffle deck</button>
+    </div>
   </div>
 
   <!-- SPREADS -->
@@ -1223,17 +1172,19 @@ document.getElementById('spreadRandom').onclick=()=>{
 };
 
 /* ---------- tabs ---------- */
+function switchToTab(pane){
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected', x.dataset.pane===pane));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.id==='pane-'+pane));
+  if(pane==='quiz' && !quizCard) resetQuizToStart();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 document.querySelectorAll('.tab').forEach(t=>{
-  t.onclick=()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected', x===t));
-    document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.id==='pane-'+t.dataset.pane));
-    if(t.dataset.pane==='quiz' && !quizCard) resetQuizToStart();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
+  t.onclick=()=>switchToTab(t.dataset.pane);
 });
 
 /* ---------- masthead pentagram: follows cursor on desktop, spins via CSS on touch ---------- */
 const pentaIcon=document.getElementById('pentaIcon');
+document.getElementById('pentaWrap')?.addEventListener('click', ()=>{ switchToTab('read'); resetSolo(); });
 if(window.matchMedia('(hover:hover)').matches){
   document.addEventListener('mousemove', e=>{
     const rect=pentaIcon.getBoundingClientRect();
