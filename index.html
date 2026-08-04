@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="The Tarot">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<title>The Tarot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manufacturing+Consent&display=swap" rel="stylesheet">
+<style>
+:root{ color-scheme: dark; --bg:#000; --line:#fff; --line-dim:#5a5a5a; --fg:#fff; --fg-dim:#8f8f8f; }
+html{background:#000 !important;color-scheme:dark;height:100%;overscroll-behavior-y:contain;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+  background:#000 !important;color:#fff;color-scheme:dark;
+  font-family:'IBM Plex Mono',ui-monospace,'SF Mono',Consolas,monospace;
+  min-height:100vh;min-height:100dvh;line-height:1.5;font-size:13px;
+  overscroll-behavior-y:contain;
+  padding:calc(16px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(108px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+}
+.shell{max-width:640px;margin:0 auto;}
+svg.gl{display:inline-block;vertical-align:-0.16em;}
+
+/* ---------- masthead ---------- */
+header{text-align:center;margin-bottom:22px;}
+.suitLoop{position:relative;width:38px;height:38px;border:1px solid var(--fg);margin:0 auto 14px;}
+.sl-g{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;animation:suitCycle 7.2s infinite;}
+.sl-1{animation-delay:0s;} .sl-2{animation-delay:1.8s;} .sl-3{animation-delay:3.6s;} .sl-4{animation-delay:5.4s;}
+@keyframes suitCycle{0%{opacity:0;transform:scale(.82);}4%{opacity:1;transform:scale(1);}21%{opacity:1;transform:scale(1);}25%{opacity:0;transform:scale(1.12);}100%{opacity:0;}}
+h1{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
+   font-size:clamp(38px,13vw,58px);line-height:1;letter-spacing:.01em;}
+.kicker{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);margin-top:9px;line-height:1.7;}
+.rule{border-top:1px solid var(--line);margin-top:14px;}
+
+/* ---------- shared controls ---------- */
+.ac-wrap{position:relative;}
+.ac-input{width:100%;background:#000;color:var(--fg);border:1px solid var(--line-dim);padding:11px 12px;font-family:inherit;font-size:16px;}
+.ac-input::placeholder{color:#555;}
+.ac-input:focus{outline:none;border-color:var(--fg);}
+.ac-input.invalid{border-style:dashed;}
+.ac-list{position:absolute;left:0;right:0;top:calc(100% + 2px);z-index:20;background:#000;border:1px solid var(--fg);max-height:250px;overflow-y:auto;display:none;}
+.ac-list.open{display:block;}
+.ac-item{padding:10px 11px;cursor:pointer;font-size:12.5px;border-bottom:1px solid #1a1a1a;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item .grp{color:var(--fg-dim);font-size:10px;margin-right:7px;}
+.ac-item.hi,.ac-item:hover{background:#161616;}
+
+button.act{width:100%;padding:13px 8px;cursor:pointer;font-family:inherit;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;user-select:none;touch-action:manipulation;position:relative;overflow:hidden;}
+.primary{background:var(--fg);color:#000;border:1px solid var(--fg);font-weight:600;}
+.primary:hover{background:#ddd;}
+.primary:active{transform:scale(.985);}
+.ghost{background:#000;color:var(--fg);border:1px solid var(--line-dim);}
+.ghost:hover{border-color:var(--fg);}
+button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
+/* sweep on press */
+.primary.pressed::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(0,0,0,.35),transparent);animation:sweep .5s ease-out;}
+@keyframes sweep{from{transform:translateX(-100%);}to{transform:translateX(100%);}}
+
+.subtle{display:block;width:100%;background:none;border:none;color:var(--fg-dim);font-family:inherit;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:12px 4px 2px;cursor:pointer;text-align:center;}
+.subtle:hover{color:var(--fg);}
+
+/* ---------- interpret tab ---------- */
+.slot{margin-bottom:13px;position:relative;}
+.slot-head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
+.slot-num{color:var(--fg-dim);font-size:11px;}
+.slot-name{font-weight:600;font-size:12.5px;letter-spacing:.02em;}
+.slot-q{font-size:11px;color:var(--fg-dim);margin:0 0 5px 22px;}
+.group-label{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--fg-dim);margin:18px 0 8px;}
+
+/* ---------- spread picker ---------- */
+.spread-select{position:relative;margin-bottom:18px;}
+.spread-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:#000;border:1px solid var(--fg);color:var(--fg);padding:12px 14px;cursor:pointer;font-family:inherit;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;user-select:none;touch-action:manipulation;}
+.spread-toggle .cur{font-weight:600;}
+.spread-toggle .caret{color:var(--fg-dim);transition:transform .15s;}
+.spread-toggle[aria-expanded="true"] .caret{transform:rotate(180deg);}
+.spread-menu{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:#000;border:1px solid var(--fg);display:none;max-height:320px;overflow-y:auto;}
+.spread-menu.open{display:block;}
+.spread-opt{padding:12px 14px;cursor:pointer;font-size:12px;letter-spacing:.04em;border-bottom:1px solid #1a1a1a;user-select:none;touch-action:manipulation;}
+.spread-opt:last-child{border-bottom:none;}
+.spread-opt:hover,.spread-opt.hi{background:#141414;}
+.spread-opt[aria-selected="true"]{font-weight:600;}
+.spread-opt[aria-selected="true"]::before{content:'\203A  ';}
+
+/* ---------- custom spread builder ---------- */
+.cust-row{border:1px solid var(--line-dim);padding:11px 12px;margin-bottom:9px;}
+.cust-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.cust-n{font-size:10px;letter-spacing:.14em;color:var(--fg-dim);flex:0 0 auto;}
+.cust-label{flex:1;background:#000;border:none;border-bottom:1px solid var(--line-dim);color:var(--fg);
+  font-family:inherit;font-size:12px;padding:4px 2px;}
+.cust-label:focus{outline:none;border-bottom-color:var(--fg);}
+.cust-del{background:none;border:none;color:var(--fg-dim);font-size:15px;cursor:pointer;padding:2px 5px;flex:0 0 auto;}
+.cust-del:hover{color:var(--fg);}
+.builder-actions{display:flex;gap:8px;margin:14px 0 4px;}
+.builder-actions button{flex:1;}
+
+/* ---------- results (unchanged formatting) ---------- */
+#out{margin-top:24px;min-height:40px;}
+.empty{text-align:center;color:var(--fg-dim);padding:34px 16px;border:1px dashed var(--line-dim);font-size:12px;}
+.sect{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+.card-block{border:1px solid var(--line-dim);padding:13px 14px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;}
+.card-block.has-image{flex-wrap:wrap;}
+.cb-img{flex:0 0 auto;max-width:140px;border:1px solid var(--line-dim);}
+.cb-img img{display:block;width:100%;height:auto;}
+.cb-info{flex:1;min-width:200px;}
+.cb-pos{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);margin-bottom:5px;}
+.cb-name{font-size:16px;font-weight:600;line-height:1.25;margin-bottom:2px;}
+.cb-title{font-size:11.5px;color:var(--fg-dim);margin-bottom:9px;}
+@media (max-width: 480px){
+  .card-block{flex-direction:column;}
+  .cb-img{max-width:100%;align-self:center;}
+  .cb-info{width:100%;}
+}
+.attrs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.attr{font-size:10px;letter-spacing:.02em;border:1px solid var(--line-dim);padding:3px 7px;color:var(--fg-dim);}
+.attr b{color:var(--fg);font-weight:600;}
+.attr.star{border-color:var(--fg);color:var(--fg);}
+.mean{font-size:12.5px;line-height:1.55;}
+.mean .lead{color:var(--fg);}
+.mean .rest{color:var(--fg-dim);}
+.chain{display:flex;align-items:stretch;border:1px solid var(--line-dim);margin:7px 0 10px;}
+.chain-end{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px 12px;min-width:66px;border-right:1px solid var(--line-dim);}
+.chain-end:last-child{border-right:none;border-left:1px solid var(--line-dim);}
+.chain-glyph{line-height:0;margin-bottom:5px;}
+.chain-glyph svg.gl{width:19px;height:19px;vertical-align:middle;}
+.chain-el{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-dim);text-align:center;}
+.chain-mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px 8px;text-align:center;}
+.chain-verb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;}
+.chain-arrow{font-size:13px;margin-bottom:2px;}
+.chain-why{font-size:10.5px;color:var(--fg-dim);margin-top:3px;line-height:1.35;}
+.res{border:1px solid var(--fg);padding:11px 13px;margin-bottom:10px;}
+.res-head{font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:7px;}
+.res-item{font-size:12px;line-height:1.5;margin-bottom:5px;}
+.res-item:last-child{margin-bottom:0;}
+.res-item b{font-weight:600;}
+.res-item .via{color:var(--fg-dim);font-style:italic;}
+.note{font-size:11.5px;color:var(--fg-dim);padding:10px 12px;border-left:2px solid var(--line-dim);margin-bottom:10px;line-height:1.55;}
+.reading{border-left:2px solid var(--fg);padding:4px 16px 4px 15px;margin-bottom:10px;}
+.reading p{font-size:13.5px;line-height:1.75;color:var(--fg);}
+.reading p + p{margin-top:12px;}
+
+/* ---------- draw animation ---------- */
+.animWrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 0 12px;min-height:250px;}
+.stage{position:relative;width:116px;height:178px;perspective:1000px;}
+.deckStack{position:absolute;inset:0;}
+.deckStack i{position:absolute;inset:0;border:1px solid var(--line-dim);border-radius:6px;}
+.deckStack i:nth-child(1){transform:translate(3px,4px);}
+.deckStack i:nth-child(2){transform:translate(6px,8px);}
+.deckStack i:nth-child(3){transform:translate(9px,12px);opacity:.5;}
+.risingCard{position:absolute;inset:0;transform-style:preserve-3d;animation:riseFlip 1.2s cubic-bezier(.22,.9,.28,1) forwards;}
+.rc-face{position:absolute;inset:0;border-radius:6px;border:1px solid var(--fg);background:#000;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center;}
+.rc-back{background-image:repeating-linear-gradient(45deg,#1a1a1a 0 2px,#000 2px 9px);}
+.rc-front{transform:rotateY(180deg);}
+.rc-front svg.gl{width:46px;height:46px;}
+@keyframes riseFlip{
+  0%{transform:translateY(28px) scale(.5) rotateY(0deg);opacity:0;}
+  16%{opacity:1;}
+  46%{transform:translateY(-8px) scale(1) rotateY(0deg);}
+  58%{transform:translateY(-8px) scale(1) rotateY(180deg);}
+  100%{transform:translateY(-8px) scale(1) rotateY(180deg);opacity:1;}
+}
+.fx{position:absolute;left:50%;top:50%;pointer-events:none;}
+.fx i{position:absolute;left:0;top:0;opacity:0;}
+/* Fire — embers licking upward */
+.fx-fire i{width:3px;height:8px;background:linear-gradient(180deg,#fff,transparent);
+  animation:ember .95s ease-out forwards;animation-delay:var(--d);}
+@keyframes ember{0%{transform:translate(-50%,-50%) translateY(0) scaleY(.5);opacity:.95;}
+  100%{transform:translate(-50%,-50%) translate(var(--dx),-72px) scaleY(1.7);opacity:0;}}
+/* Water — expanding ripple rings */
+.fx-water i{width:16px;height:16px;border:1px solid #fff;border-radius:50%;
+  animation:ripple 1.15s ease-out forwards;animation-delay:var(--d);}
+@keyframes ripple{0%{transform:translate(-50%,-50%) scale(.3);opacity:.9;}
+  100%{transform:translate(-50%,-50%) scale(5.2);opacity:0;}}
+/* Air — sweeping horizontal streaks */
+.fx-air i{height:1px;width:34px;background:linear-gradient(90deg,transparent,#fff,transparent);
+  animation:gust .85s ease-out forwards;animation-delay:var(--d);}
+@keyframes gust{0%{transform:translate(-50%,-50%) translate(-46px,var(--dy)) scaleX(.3);opacity:0;}
+  35%{opacity:.95;} 100%{transform:translate(-50%,-50%) translate(70px,var(--dy)) scaleX(1.5);opacity:0;}}
+/* Earth — motes settling downward */
+.fx-earth i{width:3px;height:3px;background:#fff;
+  animation:settle 1.15s cubic-bezier(.3,.7,.5,1) forwards;animation-delay:var(--d);}
+@keyframes settle{0%{transform:translate(-50%,-50%) translate(var(--dx),-14px);opacity:.95;}
+  100%{transform:translate(-50%,-50%) translate(var(--dx),56px);opacity:0;}}
+/* Majors — radiant burst */
+.fx-major i{width:1px;height:22px;background:linear-gradient(180deg,#fff,transparent);transform-origin:50% 0;
+  animation:radiate .9s ease-out forwards;animation-delay:var(--d);}
+@keyframes radiate{0%{transform:translate(-50%,-50%) rotate(var(--a)) translateY(6px) scaleY(.3);opacity:.95;}
+  100%{transform:translate(-50%,-50%) rotate(var(--a)) translateY(62px) scaleY(1.5);opacity:0;}}
+.animLabel{margin-top:16px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim);}
+@media (prefers-reduced-motion:reduce){ .risingCard{animation:none;transform:rotateY(180deg);opacity:1;} .fx i{animation:none;opacity:0;} }
+
+/* ---------- tabbar (prominent bordered buttons) ---------- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#000;
+  display:flex;gap:8px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));}
+.tab{flex:1;background:#000;border:1px solid var(--fg);color:var(--fg);font-family:inherit;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:13px 4px;cursor:pointer;font-weight:600;
+  user-select:none;touch-action:manipulation;border-radius:2px;}
+.tab[aria-selected="true"]{background:var(--fg);color:#000;}
+.pane{display:none;} .pane.on{display:block;}
+
+/* ---------- card slot (shared: solo + quiz + spread positions) ---------- */
+.table{display:flex;justify-content:center;padding:6px 0 4px;}
+.cardSlot{position:relative;width:150px;height:230px;perspective:1200px;cursor:pointer;flex:0 0 auto;}
+.cardSlot.big{width:170px;height:262px;}
+.cardFace{position:absolute;inset:0;border-radius:8px;border:1px solid var(--line-dim);overflow:hidden;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .55s cubic-bezier(.3,.85,.3,1);
+  background:#000;display:flex;align-items:center;justify-content:center;}
+.cardFace img{width:100%;height:100%;object-fit:cover;display:block;}
+.cardFace.back{transform:rotateY(0deg);z-index:2;}
+.cardFace.front{transform:rotateY(180deg);}
+.cardSlot.flipped .cardFace.back{transform:rotateY(180deg);}
+.cardSlot.flipped .cardFace.front{transform:rotateY(360deg);z-index:2;}
+.cardSlot[data-i]{cursor:pointer;}
+.slotLabel{margin-top:8px;text-align:center;font-size:9px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);line-height:1.3;}
+@media (prefers-reduced-motion:reduce){ .cardFace{transition:none;} }
+
+/* ---------- quiz ---------- */
+.quiz-count{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);text-align:center;margin-bottom:10px;}
+.quizName{text-align:center;font-size:15px;font-weight:600;margin:16px 0 4px;min-height:20px;}
+#quizMeaning{margin-top:6px;}
+
+/* ---------- picker (full 78 cards) ---------- */
+.pickerOverlay{position:fixed;inset:0;z-index:90;background:#000;display:none;flex-direction:column;
+  padding-top:env(safe-area-inset-top);}
+.pickerOverlay.open{display:flex;}
+.pickerHead{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;
+  border-bottom:1px solid var(--line-dim);font-size:11px;letter-spacing:.16em;text-transform:uppercase;}
+.pickerHead button{background:none;border:none;color:var(--fg);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px;}
+.pickerGrid{flex:1;overflow-y:auto;padding:14px 14px calc(24px + env(safe-area-inset-bottom));
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:10px;}
+.pickerGrid .grpHead{grid-column:1/-1;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--fg-dim);margin:14px 0 2px;border-bottom:1px solid #1a1a1a;padding-bottom:5px;}
+.pickerGrid .grpHead:first-child{margin-top:0;}
+.pickCard{cursor:pointer;text-align:center;user-select:none;touch-action:manipulation;}
+.pickCard img{width:100%;aspect-ratio:2/3.06;object-fit:cover;border:1px solid var(--line-dim);border-radius:5px;
+  display:block;margin-bottom:4px;}
+.pickCard:active img{border-color:var(--fg);}
+.pickCard .pn{font-size:8.5px;color:var(--fg-dim);line-height:1.25;}
+
+/* ---------- spread mat ---------- */
+.mat{position:relative;border:1px solid var(--line-dim);border-radius:10px;padding:24px 12px 14px;margin-bottom:16px;
+  min-height:120px;}
+.mat .cardSlot{width:70px;height:108px;margin:0 auto;}
+.matCell{position:relative;width:70px;}
+.matRow{display:flex;justify-content:center;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.matRow:last-child{margin-bottom:0;}
+.matCross{display:grid;grid-template-columns:70px 70px 70px;grid-template-rows:auto auto auto;
+  grid-template-areas:". top ." "left mid right" ". bottom .";
+  justify-content:center;column-gap:10px;row-gap:8px;margin-bottom:6px;}
+.matStack{position:relative;width:70px;height:108px;margin:0 auto;}
+.matStack .cardSlot{position:absolute;top:0;left:0;}
+.matStack .cardSlot.stackRot{transform:rotate(90deg);}
+
+
+/* ---------- install hint ---------- */
+.install-hint{display:flex;align-items:center;gap:10px;border:1px solid var(--line-dim);padding:10px 12px;margin-bottom:16px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim);}
+.install-hint span.txt{flex:1;line-height:1.5;text-align:left;}
+.install-hint b{color:var(--fg);}
+.install-hint button{background:none;border:1px solid var(--line-dim);color:var(--fg);padding:6px 9px;font-family:inherit;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;flex:0 0 auto;}
+.install-hint button:hover{border-color:var(--fg);}
+.install-hint .x{border:none;padding:6px 4px;color:var(--fg-dim);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="suitLoop" aria-hidden="true">
+      <span class="sl-g sl-1"></span><span class="sl-g sl-2"></span><span class="sl-g sl-3"></span><span class="sl-g sl-4"></span>
+    </div>
+    <h1>The Tarot</h1>
+    <div class="kicker">Determine your destiny!<br>Predict your own future!</div>
+    <div class="rule"></div>
+  </header>
+
+  <div id="installHint"></div>
+
+  <!-- INTERPRET (1 CARD) -->
+  <div class="pane on" id="pane-read">
+    <div class="table" id="soloTable">
+      <div class="cardSlot big" id="soloSlot" data-empty="1">
+        <div class="cardFace back" id="soloBack">
+          <img src="./cards/card_back.png" alt="Card back" loading="lazy">
+        </div>
+        <div class="cardFace front" id="soloFront"></div>
+      </div>
+    </div>
+    <div class="ac-wrap" style="margin-top:16px;">
+      <input type="text" id="soloInput" class="ac-input" autocomplete="off" spellcheck="false"
+             placeholder="Name a card, or type a number…" data-cardid="" enterkeyhint="go">
+      <div class="ac-list" id="soloList"></div>
+    </div>
+    <button class="subtle" id="soloRandom">Random</button>
+    <div id="soloOut"></div>
+  </div>
+
+  <!-- QUIZ ME -->
+  <div class="pane" id="pane-quiz">
+    <div class="quiz-count" id="quizCount"></div>
+    <div class="table">
+      <div class="cardSlot big" id="quizSlot" data-empty="1">
+        <div class="cardFace back" id="quizBack">
+          <img src="./cards/card_back.png" alt="Card back" loading="lazy">
+        </div>
+        <div class="cardFace front" id="quizFront"></div>
+      </div>
+    </div>
+    <div class="quizName" id="quizName"></div>
+    <button class="act primary" id="quizReveal" hidden>Reveal Meaning</button>
+    <div id="quizMeaning"></div>
+    <button class="act ghost" id="quizNext" style="margin-top:10px;">Next Card</button>
+    <button class="subtle" id="quizReshuffle">Reshuffle deck</button>
+  </div>
+
+  <!-- SPREADS -->
+  <div class="pane" id="pane-spreads">
+    <div class="spread-select">
+      <button class="spread-toggle" id="spreadToggle" aria-expanded="false" aria-haspopup="listbox">
+        <span>Spread: <span class="cur" id="spreadCurrent">Past &middot; Present &middot; Future</span></span>
+        <span class="caret">&#9662;</span>
+      </button>
+      <div class="spread-menu" id="spreadMenu" role="listbox"></div>
+    </div>
+    <div class="mat" id="mat"></div>
+    <div id="slots"></div>
+    <div id="builder"></div>
+    <button class="subtle" id="spreadRandom">Draw at random</button>
+    <div id="spreadOut"></div>
+  </div>
+</div>
+
+<!-- full 78-card picker -->
+<div class="pickerOverlay" id="pickerOverlay">
+  <div class="pickerHead">
+    <span>Choose a card</span>
+    <button id="pickerClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="pickerGrid" id="pickerGrid"></div>
+</div>
+
+<nav class="tabbar" role="tablist">
+  <button class="tab" id="tab-read" role="tab" aria-selected="true" data-pane="read">1 Card</button>
+  <button class="tab" id="tab-quiz" role="tab" aria-selected="false" data-pane="quiz">Quiz Me</button>
+  <button class="tab" id="tab-spreads" role="tab" aria-selected="false" data-pane="spreads">Spreads</button>
+</nav>
+
+<script>
+
+
+/* ---------- astrological line-art glyphs (24x24, stroke only) ---------- */
+const GLYPH_PATHS = {
+Fire:'<path d="M12 3.4 L21.2 19.4 L2.8 19.4 Z"/>',
+Water:'<path d="M12 20.6 L2.8 4.6 L21.2 4.6 Z"/>',
+Air:'<path d="M12 3.4 L21.2 19.4 L2.8 19.4 Z"/><path d="M6.4 14 L17.6 14"/>',
+Earth:'<path d="M12 20.6 L2.8 4.6 L21.2 4.6 Z"/><path d="M6.4 10 L17.6 10"/>',
+
+Aries:'<path d="M12 21 L12 10"/><path d="M12 10.5 C12 5 9.5 3 7 3.6 C4.6 4.2 3.4 7 4.6 9.6"/><path d="M12 10.5 C12 5 14.5 3 17 3.6 C19.4 4.2 20.6 7 19.4 9.6"/>',
+Taurus:'<circle cx="12" cy="16" r="5.2"/><path d="M5.2 4.2 C5.2 9 8.4 11 12 11 C15.6 11 18.8 9 18.8 4.2"/>',
+Gemini:'<path d="M6 4.4 C8.6 3.2 15.4 3.2 18 4.4"/><path d="M6 19.6 C8.6 20.8 15.4 20.8 18 19.6"/><path d="M9 4 L9 20"/><path d="M15 4 L15 20"/>',
+Cancer:'<path d="M21 8.6 C17.5 6 11.5 6 8.6 8"/><circle cx="5.8" cy="9.8" r="2.7"/><path d="M3 15.4 C6.5 18 12.5 18 15.4 16"/><circle cx="18.2" cy="14.2" r="2.7"/>',
+Leo:'<circle cx="8" cy="16.4" r="4"/><path d="M11.6 14.6 C10.4 10.6 10 6.4 12.6 4.6 C15 3 17.6 4.6 17.4 7.2 C17.2 10 15 11.6 15 14 C15 16.6 16.6 18.4 19.4 18.2"/>',
+Virgo:'<path d="M3.5 6.5 C5 5 6.6 5.6 6.6 8 L6.6 17"/><path d="M6.6 8 C6.6 5.6 8.4 5 9.6 6.2 C10.4 7 10.6 8.2 10.6 9.4 L10.6 17"/><path d="M10.6 9.4 C10.6 6.8 12.4 5.6 13.8 6.6 C14.8 7.4 15 8.8 15 10.4 C15 13.4 14.6 16 15.8 17.6"/><path d="M15.8 17.6 C17 19.2 19.4 18.6 20.2 16.4 C21 14.2 19.6 11.8 16.6 12.6 C14 13.3 12.6 16.6 12.4 20.4"/>',
+Libra:'<path d="M3.5 19.5 L20.5 19.5"/><path d="M3.5 14 L8 14"/><path d="M16 14 L20.5 14"/><path d="M8 14 C8 9 16 9 16 14"/>',
+Scorpio:'<path d="M3.4 6.6 C4.8 5.2 6.4 5.8 6.4 8.2 L6.4 17.4"/><path d="M6.4 8.2 C6.4 5.8 8.2 5.2 9.4 6.4 C10.2 7.2 10.4 8.4 10.4 9.6 L10.4 17.4"/><path d="M10.4 9.6 C10.4 7 12.2 5.8 13.6 6.8 C14.4 7.6 14.6 9 14.6 10.6 L14.6 18.2"/><path d="M14.6 18.2 L21 12"/><path d="M17.6 12 L21 12"/><path d="M21 12 L21 15.4"/>',
+Sagittarius:'<path d="M4.5 19.5 L19 5"/><path d="M19 5 L12.4 5"/><path d="M19 5 L19 11.6"/><path d="M8.4 10.4 L14.6 16.6"/>',
+Capricorn:'<path d="M3.6 6.4 C5.4 5 7.4 6 7.8 8.8 C8.2 12 9.4 15.2 11.2 17.2"/><path d="M11.2 17.2 C10 12.6 10.2 8.6 11.8 6.8 C13.4 5 15.6 6 15.6 8.6 C15.6 11 14.2 12.6 12.4 13"/><path d="M12.4 13 C15.6 12 18.8 13.4 19.2 16.2 C19.6 19 17 21 14.6 19.8"/>',
+Aquarius:'<path d="M3.5 11 L6.6 7.8 L9.8 11 L13 7.8 L16.2 11 L19.4 7.8"/><path d="M3.5 17.4 L6.6 14.2 L9.8 17.4 L13 14.2 L16.2 17.4 L19.4 14.2"/>',
+Pisces:'<path d="M6.6 3.4 C3.4 7 3.4 17 6.6 20.6"/><path d="M17.4 3.4 C20.6 7 20.6 17 17.4 20.6"/><path d="M4.6 12 L19.4 12"/>',
+
+Sun:'<circle cx="12" cy="12" r="7.4"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+Moon:'<path d="M15.6 3.6 C10 5.2 6.4 8.6 6.4 12 C6.4 15.4 10 18.8 15.6 20.4 C10.4 20.6 4.2 17.6 4.2 12 C4.2 6.4 10.4 3.4 15.6 3.6 Z"/>',
+Mercury:'<path d="M8 2.6 C8 5.8 9.8 7.4 12 7.4 C14.2 7.4 16 5.8 16 2.6"/><circle cx="12" cy="12.2" r="4.4"/><path d="M12 16.6 L12 21.6"/><path d="M9 19.2 L15 19.2"/>',
+Venus:'<circle cx="12" cy="8.6" r="5"/><path d="M12 13.6 L12 21.4"/><path d="M8.6 18.2 L15.4 18.2"/>',
+Mars:'<circle cx="10" cy="14.4" r="5.4"/><path d="M13.9 10.6 L20.2 4.3"/><path d="M14.6 4.3 L20.4 4.3"/><path d="M20.4 4.3 L20.4 10.1"/>',
+Jupiter:'<path d="M4.4 6.2 C6.6 3.4 10.4 3.8 10.6 7.6 C10.8 11.6 8.4 15.4 4.4 18.6"/><path d="M4.4 18.6 L18.6 18.6"/><path d="M14.2 3.6 L14.2 21"/>',
+Saturn:'<path d="M5.6 6.4 L12.6 6.4"/><path d="M9 2.6 L9 13.4"/><path d="M9 13.4 C10 10.6 12.6 9.6 14.8 11 C17 12.4 17.4 15.8 16.4 18 C15.6 19.8 14 21 12.2 21.2"/>'
+};
+
+function glyph(name, px){
+  const p = GLYPH_PATHS[name];
+  if(!p) return '';
+  const s = px || 13;
+  return '<svg class="gl" viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" '+
+         'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
+}
+function mapGlyphs(names){
+  const o = {};
+  names.forEach(n => { o[n] = glyph(n); });
+  return o;
+}
+
+/* ---------- card image paths ---------- */
+function cardImagePath(card){
+  if(card.kind === 'major'){
+    // Convert Roman numeral to Arabic for the filename
+    const romanMap={'0':0,'I':1,'II':2,'III':3,'IV':4,'V':5,'VI':6,'VII':7,'VIII':8,'IX':9,'X':10,
+      'XI':11,'XII':12,'XIII':13,'XIV':14,'XV':15,'XVI':16,'XVII':17,'XVIII':18,'XIX':19,'XX':20,'XXI':21};
+    const num = romanMap[card.numeral];
+    if(num === undefined) return null;
+    const padded = String(num).padStart(2,'0');
+    const safeName = card.name.replace(/\s+/g,'_');
+    return `./cards/${padded}_${safeName}.png`;
+  } else if(card.kind === 'pip' || card.kind === 'court'){
+    // Minor Arcana: "Ace of Cups" -> "Ace_of_Cups.png"
+    const safeName = card.name.replace(/\s+/g,'_');
+    return `./cards/${safeName}.png`;
+  }
+  return null;
+}
+
+const EL = mapGlyphs(['Fire','Water','Air','Earth']);
+const SUIT_EL = {Wands:'Fire',Cups:'Water',Swords:'Air',Pentacles:'Earth'};
+const RANK_EL = {Page:'Earth',Knight:'Fire',Queen:'Water',King:'Air'};
+const ELEMENT_DOMAIN = {Fire:'will and action', Water:'feeling and connection', Air:'thought and communication', Earth:'the material and the body'};
+const RANK_FLAVOR = {Page:"a student's curiosity, still learning the suit's own language", Knight:'headlong pursuit, all motion and no brakes', Queen:'mastery turned inward, held rather than performed', King:'authority turned outward, directing rather than doing'};
+const PLANET_MEAN = {Saturn:'limit and necessity', Jupiter:'expansion and scope', Mars:'force and cutting opposition', Venus:'attraction and desire', Mercury:'exchange and quick intellect', Moon:'reflection and instinct', Sun:'vitality and the unified self'};
+
+const SEPH = {1:['Kether',null],2:['Chokmah',null],3:['Binah','Saturn'],4:['Chesed','Jupiter'],5:['Geburah','Mars'],6:['Tiphareth','Sun'],7:['Netzach','Venus'],8:['Hod','Mercury'],9:['Yesod','Moon'],10:['Malkuth',null]};
+const NUM_THEME = {1:'spark, unformed potential',2:'partnership, choice',3:'growth, early expansion',4:'stability, structure',5:'disruption, conflict',6:'harmony, recovery',7:'reflection, testing',8:'mastery, directed momentum',9:'solitude, near-completion',10:'culmination'};
+const RULER = {Aries:'Mars',Taurus:'Venus',Gemini:'Mercury',Cancer:'Moon',Leo:'Sun',Virgo:'Mercury',Libra:'Venus',Scorpio:'Mars',Sagittarius:'Jupiter',Capricorn:'Saturn',Aquarius:'Saturn',Pisces:'Jupiter'};
+const PGLYPH = mapGlyphs(['Saturn','Jupiter','Mars','Venus','Mercury','Moon','Sun']);
+const ZGLYPH = mapGlyphs(['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']);
+
+const MAJORS = [
+ ['0','The Fool','Air',null,null,'beginning, spontaneity, faith, apparent folly'],
+ ['I','The Magician','Air','Mercury',null,'action, conscious awareness, concentration, power'],
+ ['II','The High Priestess','Water','Moon',null,'non-action, unconscious awareness, potential, mystery'],
+ ['III','The Empress','Earth','Venus',null,'mothering, abundance, senses, nature'],
+ ['IV','The Emperor','Fire',null,'Aries','fathering, structure, authority, regulation'],
+ ['V','The Hierophant','Earth',null,'Taurus','education, belief systems, conformity, group identification'],
+ ['VI','The Lovers','Air',null,'Gemini','relationship, sexuality, personal beliefs, values'],
+ ['VII','The Chariot','Water',null,'Cancer','victory, will, self-assertion, hard control'],
+ ['VIII','Strength','Fire',null,'Leo','courage, compassion, gentle persuasion'],
+ ['IX','The Hermit','Earth',null,'Virgo','introspection, guidance, searching, solitude'],
+ ['X','Wheel of Fortune','Fire','Jupiter',null,'destiny, turning point, movement, personal vision'],
+ ['XI','Justice','Air',null,'Libra','justice, responsibility, decision, cause and effect'],
+ ['XII','The Hanged Man','Water',null,null,'letting go, reversal, suspension, sacrifice'],
+ ['XIII','Death','Water',null,'Scorpio','ending, transition, elimination, inexorable forces'],
+ ['XIV','Temperance','Fire',null,'Sagittarius','balance, moderation, harmonious blending of opposing forces'],
+ ['XV','The Devil','Earth',null,'Capricorn','bondage, materialism, ignorance, hopelessness'],
+ ['XVI','The Tower','Fire','Mars',null,'sudden change, release, downfall, revelation'],
+ ['XVII','The Star','Air',null,'Aquarius','hope, inspiration, generosity, serenity'],
+ ['XVIII','The Moon','Water',null,'Pisces','fear, illusion, imagination, bewilderment'],
+ ['XIX','The Sun','Fire','Sun',null,'enlightenment, greatness, vitality, assurance'],
+ ['XX','Judgement','Fire',null,null,'judgement, rebirth, inner calling, absolution'],
+ ['XXI','The World','Earth','Saturn',null,'integration, accomplishment, involvement, fulfillment']
+];
+
+const PIPS = {
+Wands:[
+ [1,'raw creative spark • new enterprise • invention • adventure/escapade','The Powers of Fire',null,null],
+ [2,'bold personal power • courage in embarking • influence over another • generous yet proud','Dominion','Mars','Aries'],
+ [3,'visionary forward expansion • realization of hope • established strength • partnership offered','Established Strength','Sun','Aries'],
+ [4,'joyful earned homecoming • rest after labor • romance, a coming marriage • peace and prosperity','Perfected Work','Venus','Aries'],
+ [5,'disorganized competitive conflict • rashness • obstacles • lawsuit','Strife','Saturn','Leo'],
+ [6,'public earned victory • victory after strife • advancement in the arts and sciences • friends are helpful','Victory','Jupiter','Leo'],
+ [7,'defiant embattled perseverance • courage against opposition • the position of advantage • certain success','Valour','Mars','Leo'],
+ [8,'swift directed momentum • hasty communication • messages, letters of love • journey by air','Swiftness','Mercury','Sagittarius'],
+ [9,'battle-worn wary resilience • strength in reserve • eventual victory • obstinacy','Great Strength','Moon','Sagittarius'],
+ [10,'overburdened relentless struggle • power unwisely used • selfish ends • a refining trial by fire','Oppression','Saturn','Sagittarius']
+],
+Cups:[
+ [1,'overflowing emotional grace • the beginning of great love • productiveness, fertility • beauty and pleasure','The Powers of Water',null,null],
+ [2,'mutual heartfelt connection • reciprocity • a kindred soul • harmony of masculine and feminine','Love','Venus','Cancer'],
+ [3,'shared joyful celebration • hospitality • happy issue of an undertaking • good luck and fortune','Abundance','Mercury','Cancer'],
+ [4,'apathetic missed contentment • weariness, surfeit • reevaluation of one\u2019s pleasures • kindness from others','Blended Pleasure','Moon','Cancer'],
+ [5,'disproportionate grief, loss • disillusionment in love • vain regret • loss, but with something left over','Loss (in Pleasure)','Mars','Scorpio'],
+ [6,'nostalgic childhood memory • a childhood acquaintance • a gift from an admirer • new friendships','Pleasure','Sun','Scorpio'],
+ [7,'wishful illusory thinking • castles in the air • forces too scattered • illusionary success','Illusionary Success','Venus','Scorpio'],
+ [8,'meaningful deliberate departure • journeying from place to place • leaving success for something higher • things thrown aside as soon as gained','Abandoned Success','Saturn','Pisces'],
+ [9,'contented wish fulfilled • \u201cthe wish card\u201d • physical well-being • all good things available','Material Happiness','Jupiter','Pisces'],
+ [10,'familial emotional fulfillment • inspired from above, not sensual satisfaction • perfection of human love • peacemaking','Perfected Success','Mars','Pisces']
+],
+Swords:[
+ [1,'clarifying mental breakthrough • triumph of power • championship • the power to love or hate strongly','The Powers of Air',null,null],
+ [2,'avoided guarded stalemate • tension in relationships • balanced forces needing direction • military friendships','Peace (Restored)','Moon','Libra'],
+ [3,'clean honest heartbreak • stormy weather for the affections • separation, quarreling • general upheaval of environment','Sorrow','Saturn','Libra'],
+ [4,'deliberate restorative rest • hermit\u2019s repose • banishment • \u201cnot a card of death\u201d','Rest (from Strife)','Jupiter','Libra'],
+ [5,'hollow self-interested victory • failure, defeat • degradation • unfairness, slander','Defeat','Venus','Aquarius'],
+ [6,'effortful calmer transition • journey to a new home, by water • success after anxieties • a journey in consciousness','Earned Success','Mercury','Aquarius'],
+ [7,'stealthy incomplete effort • an unwise attempt • spying on another • a plan that may fail','Unstable Effort','Moon','Aquarius'],
+ [8,'self-imposed felt restriction • imprisonment through indecision • fear to move • restricted surroundings','Shortened Force','Jupiter','Gemini'],
+ [9,'anguished sleepless despair • doubt and desolation • burden, oppression • suffering, misery','Despair (and Cruelty)','Mars','Gemini'],
+ [10,'rock-bottom, dawn ahead • ruin of plans and projects • \u201cnot a card of violent death\u201d • give charity freely','Ruin','Sun','Gemini']
+],
+Pentacles:[
+ [1,'tangible grounded opportunity • beginning of wealth and material gain • gold, prosperity • pleasure and beauty combined','The Powers of Earth',null,null],
+ [2,'playful priorities juggled • lightheartedness, gaiety • harmony in the midst of change • juggling two situations','Change','Jupiter','Capricorn'],
+ [3,'skilled collaborative recognition • the master craftsman • gain in a commercial transaction • membership in a guild or society','Material Works','Mars','Capricorn'],
+ [4,'fearful tight-fisted hoarding • earthly power leading to nothing beyond it • gifts, legacy, inheritance • assured material gain','Earthly Power','Sun','Capricorn'],
+ [5,'excluded material hardship • dark night of the soul • loss of home • loneliness','Material Trouble','Mercury','Taurus'],
+ [6,'generous unequal exchange • alms dispensed with justice • others will share with you justly • gifts, inheritance','Material Success','Moon','Taurus'],
+ [7,'patient assessing return • unprofitable speculations • anxiety about a loan • a pause in development','Success Unfulfilled','Saturn','Taurus'],
+ [8,'focused repetitive mastery • learning a trade • employment or commission to come • a profitable undertaking begins','Prudence','Sun','Virgo'],
+ [9,'self-sufficient cultivated ease • solitary enjoyment • love of gardens and home • material well-being','Material Gain','Venus','Virgo'],
+ [10,'generational lasting legacy • interest in one\u2019s ancestral tree • riches, inheritance • a matter of will or pension','Wealth','Mercury','Virgo']
+]};
+
+const COURTS = {
+Wands:{Page:'eager curious experimenter • sudden in love or anger • bearer of tidings • enthusiasm',
+ Knight:'impulsive passionate adventurer • generous yet impulsive • quick departure • change of residence',
+ Queen:'confident magnetic creator • power to attract • practical with money • fruitful in mind and body',
+ King:'visionary commanding leader • passionate and agile • loyal and noble • a country gentleman'},
+Cups:{Page:'heartfelt loving messenger • flights of imagination • birth of a child • studious, melancholy',
+ Knight:'romantic idealistic pursuer • a dreamer of sensual delights • a proposition, an invitation • graceful, poetic',
+ Queen:'empathetic intuitive nurturer • visions put into practice • devoted and loyal • the good wife and mother',
+ King:'diplomatic composed authority • skilled in law and trade • kind and considerate • connected to church or institution'},
+Swords:{Page:'curious watchful mind • diplomacy • grace and dexterity • a message, or spying',
+ Knight:'relentless truth-seeking pursuer • dashing and brave • a clean heart • coming or going of misfortune',
+ Queen:'sharp honest clarity • quick-witted • widowhood, mourning • kindness but also firmness',
+ King:'intellectual impartial authority • a lawyer or judge • wise counsel • firm in enmity and friendship'},
+Pentacles:{Page:'diligent grounded student • a scholar • good management, carefulness • respect for new ideas',
+ Knight:'steady methodical worker • laborious and patient • utility, trustworthiness • accepts responsibility',
+ Queen:'practical resourceful nurturer • \u201cthe Earth Mother\u201d • rich but charitable • opulence, security',
+ King:'established reliable provider • a chief of industry • reliable, financially gifted • owner of large estates'}
+};
+
+const DECK = [];
+MAJORS.forEach(([num,name,el,planet,zodiac,mean])=>{
+  DECK.push({id:'M'+num, name, kind:'major', numeral:num, element:el, planet, zodiac, ruler: zodiac?RULER[zodiac]:null, pure:(!planet && !zodiac), mean, star:false});
+});
+const RANKNAME = {1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten'};
+Object.keys(PIPS).forEach(suit=>{
+  PIPS[suit].forEach(([n,mean,title,dp,ds])=>{
+    const [sName,sPlanet] = SEPH[n];
+    DECK.push({id:suit[0]+n, name:`${RANKNAME[n]} of ${suit}`, kind:'pip', suit, num:n, element:SUIT_EL[suit], seph:sName, sephPlanet:sPlanet, decanPlanet:dp, decanSign:ds, title:'Lord of '+title, numTheme:NUM_THEME[n], mean, star: !!(sPlanet && dp && sPlanet===dp)});
+  });
+  ['Page','Knight','Queen','King'].forEach(rank=>{
+    DECK.push({id:suit[0]+(rank==='Knight'?'N':rank[0]), name:`${rank} of ${suit}`, kind:'court', suit, rank, element:SUIT_EL[suit], compound:`${RANK_EL[rank]} of ${SUIT_EL[suit]}`, mean:COURTS[suit][rank], star:false});
+  });
+});
+const BY_ID = Object.fromEntries(DECK.map(c=>[c.id,c]));
+const BY_NAME_LOWER = Object.fromEntries(DECK.map(c=>[c.name.toLowerCase(),c]));
+
+const OPPOSED = [['Fire','Water'],['Air','Earth']];
+const ALLIED  = [['Fire','Air'],['Water','Earth']];
+function pairIn(list,a,b){return list.some(p=>(p[0]===a&&p[1]===b)||(p[0]===b&&p[1]===a));}
+function dignity(a,b){
+  if(a===b) return {verb:'AMPLIFY',arrow:'▲▲',why:'Same element — the theme intensifies itself.'};
+  if(pairIn(ALLIED,a,b)) return {verb:'STRENGTHEN',arrow:'▲',why:(a==='Fire'||b==='Fire')?'Air feeds Fire — they reinforce each other.':'Water nourishes Earth — they reinforce each other.'};
+  if(pairIn(OPPOSED,a,b)) return {verb:'WEAKEN',arrow:'▼',why:(a==='Fire'||b==='Fire')?'True opposites — Water extinguishes Fire.':'True opposites — Earth smothers Air.'};
+  return {verb:'NEUTRAL',arrow:'—',why:'Adjacent, not opposed — neither feeds nor fights the other.'};
+}
+
+function planetsOf(c){
+  const out=[];
+  if(c.kind==='major'){
+    if(c.planet) out.push({p:c.planet,src:'its planetary attribution',primary:true});
+    else if(c.ruler) out.push({p:c.ruler,src:`ruler of ${c.zodiac}`,primary:false});
+  } else if(c.kind==='pip'){
+    if(c.sephPlanet) out.push({p:c.sephPlanet,src:`${c.seph}`,primary:true});
+    if(c.decanPlanet) out.push({p:c.decanPlanet,src:`decan`,primary:true});
+  }
+  return out;
+}
+function resonance(a,b){
+  const found=[];
+  planetsOf(a).forEach(x=>planetsOf(b).forEach(y=>{
+    if(x.p===y.p) found.push({planet:x.p, txt:`<b>${x.p} ${PGLYPH[x.p]}</b> in both — ${a.name} <span class="via">(${x.src})</span> and ${b.name} <span class="via">(${y.src})</span>.`, plain:`${x.p} runs underneath both — ${a.name} through ${x.src}, ${b.name} through ${y.src}.`, primary:x.primary&&y.primary});
+  }));
+  return found;
+}
+function attrs(c){
+  const a=[];
+  a.push(`<span class="attr">${EL[c.element]} <b>${c.element}</b></span>`);
+  if(c.kind==='major'){
+    if(c.pure) a.push(`<span class="attr">Pure element <b>—</b> no planet</span>`);
+    if(c.planet) a.push(`<span class="attr">${PGLYPH[c.planet]} <b>${c.planet}</b></span>`);
+    if(c.zodiac) a.push(`<span class="attr">${ZGLYPH[c.zodiac]} <b>${c.zodiac}</b></span>`);
+    if(c.zodiac) a.push(`<span class="attr">ruled by <b>${c.ruler}</b> ${PGLYPH[c.ruler]}</span>`);
+  }
+  if(c.kind==='pip'){
+    a.push(`<span class="attr">${c.num} · <b>${c.seph}</b>${c.sephPlanet?' '+PGLYPH[c.sephPlanet]+' '+c.sephPlanet:''}</span>`);
+    if(c.decanPlanet) a.push(`<span class="attr">${PGLYPH[c.decanPlanet]} <b>${c.decanPlanet}</b> in ${c.decanSign} ${ZGLYPH[c.decanSign]}</span>`);
+    else a.push(`<span class="attr">Root of the element <b>—</b> no decan</span>`);
+    if(c.star) a.push(`<span class="attr star">★ decan matches Sephira</span>`);
+  }
+  if(c.kind==='court'){
+    a.push(`<span class="attr"><b>${c.compound}</b></span>`);
+    a.push(`<span class="attr">No decan <b>—</b> Four Worlds</span>`);
+  }
+  return `<div class="attrs">${a.join('')}</div>`;
+}
+function meanHTML(c){
+  const parts=c.mean.split('•').map(x=>x.trim());
+  return `<div class="mean"><span class="lead">${parts[0]}</span>`+(parts.length>1?`<span class="rest"> · ${parts.slice(1).join(' · ')}</span>`:'')+`</div>`;
+}
+function cardBlock(c,posName,i,opts){
+  opts = opts||{};
+  const imgPath = opts.skipImg ? null : cardImagePath(c);
+  const hasImg = !!imgPath;
+  return `<div class="card-block${hasImg ? ' has-image' : ''}">
+    ${imgPath?`<div class="cb-img"><img src="${imgPath}" alt="${c.name}" loading="lazy"></div>`:''}
+    <div class="cb-info">
+      ${posName?`<div class="cb-pos">${i!=null?i+1+' · ':''}${posName}</div>`:''}
+      <div class="cb-name">${c.kind==='major'?c.numeral+' '+c.name:c.name}</div>
+      ${c.title?`<div class="cb-title">${c.title}</div>`:''}
+      ${attrs(c)}
+      ${c.kind==='pip'?`<div class="mean" style="margin-bottom:8px"><span class="rest">Number ${c.num}: ${c.numTheme}</span></div>`:''}
+      ${meanHTML(c)}
+    </div>
+  </div>`;
+}
+function chainBlock(a,b,labelA,labelB){
+  const d=dignity(a.element,b.element);
+  return `<div class="chain">
+    <div class="chain-end"><div class="chain-glyph">${EL[a.element]}</div><div class="chain-el">${labelA}</div></div>
+    <div class="chain-mid"><div class="chain-arrow">${d.arrow}</div><div class="chain-verb">${d.verb}</div><div class="chain-why">${d.why}</div></div>
+    <div class="chain-end"><div class="chain-glyph">${EL[b.element]}</div><div class="chain-el">${labelB}</div></div>
+  </div>`;
+}
+function shortName(c){ if(c.kind==='major') return c.name.replace(/^The /,''); return c.name.replace(' of ',' · '); }
+function displayName(c){ return c.kind==='major' ? c.numeral+' '+c.name : c.name; }
+function resBlock(pairs){
+  const items=[];
+  pairs.forEach(([a,b])=>resonance(a,b).forEach(r=>items.push(r)));
+  const uniq=[...new Map(items.map(r=>[r.txt,r])).values()];
+  if(!uniq.length) return '';
+  return `<div class="res"><div class="res-head">PLANETARY RESONANCE</div>`+uniq.map(r=>`<div class="res-item">${r.txt}${r.primary?'':' <span class="via">— via sign rulership, hold loosely.</span>'}</div>`).join('')+`</div>`;
+}
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function shortLead(c){ return c.mean.split('•')[0].trim(); }
+function restKeywords(c){ return c.mean.split('•').slice(1).map(s=>s.trim()); }
+function joinList(arr){ if(arr.length===0) return ''; if(arr.length===1) return arr[0]; return arr.slice(0,-1).join(', ')+', and '+arr[arr.length-1]; }
+const CONNECTORS = {
+  AMPLIFY: ["and doesn't let up — if anything it presses harder into the same note","doubling straight back on itself rather than moving past it","answering with more of exactly the same energy"],
+  STRENGTHEN: ["which feeds it rather than fighting it","and the two lean into each other easily","reinforcing it rather than complicating it"],
+  NEUTRAL: ["sitting alongside it rather than reacting to it","a genuine change of register — neither helped nor hindered","the two simply coexist, each doing its own separate work"],
+  WEAKEN: ["which runs straight against it","true friction here, not just contrast","the two pull in real opposite directions"]
+};
+function cardFlavorSentence(c){
+  if(c.kind==='major'){
+    if(c.pure) return `It's one of only three cards in the whole deck answering to no planet or sign at all — pure, unmixed ${c.element.toLowerCase()}.`;
+    if(c.planet) return `${c.planet} runs it — ${PLANET_MEAN[c.planet]} — which is exactly the register it plays in.`;
+    return `${c.zodiac} carries it, and ${c.zodiac} answers to ${c.ruler} — ${PLANET_MEAN[c.ruler]}.`;
+  }
+  if(c.kind==='pip'){
+    let s=`As a ${c.num}, it's working the ${c.numTheme} stage of the suit's own arc`;
+    s += c.decanPlanet ? `, sharpened by its decan — ${c.decanPlanet} in ${c.decanSign} — into ${PLANET_MEAN[c.decanPlanet]}.` : `, sitting at the root of ${c.element.toLowerCase()} itself, before any single planet has shaped it.`;
+    return s;
+  }
+  return `As the ${c.rank} of ${c.suit}, it's ${c.element.toLowerCase()} filtered through ${RANK_FLAVOR[c.rank]}.`;
+}
+function starSentence(c){
+  return `And here's the kind of thing worth catching: ${displayName(c)} is one of the rare ★ cards, where the decan's planet and the Sephira's own planet turn out to be the very same body — ${c.decanPlanet}, arrived at twice, by two systems built centuries apart. That's not a small coincidence to wave off.`;
+}
+function narrateSingle(c){
+  const lead=shortLead(c), rest=restKeywords(c);
+  let p1=pick([`${displayName(c)} sits alone today, and it doesn't hedge: ${lead}.`,`Pulled on its own, ${displayName(c)} speaks plainly — ${lead}.`,`One card, one clear note. ${displayName(c)} is ${lead}.`]);
+  let p2=cardFlavorSentence(c);
+  let p3=rest.length?`There's a secondary thread worth keeping in view too — ${joinList(rest)}.`:'';
+  let paras=[p1+' '+p2];
+  if(p3) paras.push(p3);
+  if(c.star) paras.push(starSentence(c));
+  return paras.map(p=>`<p>${p}</p>`).join('');
+}
+function narrateChain(cards, positions){
+  const sentences=[positions.length>1?`Read start to finish, this is a short arc — ${positions.length} beats, one throughline.`:''].filter(Boolean);
+  for(let i=0;i<cards.length-1;i++){
+    const a=cards[i], b=cards[i+1];
+    const d=dignity(a.element,b.element);
+    const conn=pick(CONNECTORS[d.verb]);
+    const posA=positions.length>1?positions[i].n:null;
+    const posB=positions.length>1?positions[i+1].n:null;
+    sentences.push(`${posA?posA+' — ':''}${displayName(a)} is ${shortLead(a)}, ${conn}, ${posB?'moving into the '+posB.toLowerCase()+': ':''}${displayName(b)} — ${shortLead(b)}.`);
+    const res=resonance(a,b);
+    if(res.length) sentences.push(res.map(r=>r.plain).join(' '));
+  }
+  cards.forEach(c=>{ if(c.star) sentences.push(starSentence(c)); });
+  sentences.push(`Start to finish: ${shortLead(cards[0])}, arriving — by way of everything between — at ${shortLead(cards[cards.length-1])}.`);
+  return sentences.map(s=>`<p>${s}</p>`).join('');
+}
+function narrateBrief(cards){
+  const els=cards.map(c=>c.element);
+  const counts={}; els.forEach(e=>counts[e]=(counts[e]||0)+1);
+  const dom=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  let s=`Across all ${cards.length} cards, this reads fundamentally as a ${dom[0]} story — ${ELEMENT_DOMAIN[dom[0]]}, more than anything else at work here.`;
+  const starred=cards.filter(c=>c.star);
+  if(starred.length) s+= ` ${starred.map(c=>displayName(c)).join(' and ')} stand out as the loudest cards in the spread — decan and Sephira agreeing outright, worth extra weight.`;
+  s+= ` If you need the line to hold onto walking away: it starts as ${shortLead(cards[0])}, and — carried through everything above — ends up at ${shortLead(cards[cards.length-1])}.`;
+  return `<p>${s}</p>`;
+}
+function narrativeSection(cards, spread){
+  const s=spread||activeSpread();
+  let body;
+  if(cards.length===1) body=narrateSingle(cards[0]);
+  else if(s.detailed) body=narrateChain(cards, s.positions);
+  else body=narrateBrief(cards);
+  return `<div class="sect">THE READING</div><div class="reading">${body}</div>`;
+}
+
+function buildResultsHTML(cards, spread, opts){
+  opts = opts||{};
+  const s=spread||activeSpread();
+  let html='';
+  html+=`<div class="sect">THE CARDS</div>`;
+  cards.forEach((c,i)=>{ html+=cardBlock(c, s.positions.length>1?s.positions[i].n:null, s.positions.length>1?i:null, opts); });
+
+  const starred=cards.filter(c=>c.star);
+  if(starred.length){ html+=`<div class="note">${starred.map(c=>c.name).join(' and ')} ${starred.length>1?'are':'is'} ★-aligned — decan planet and Sephira planet are the same body. Two systems, built centuries apart, agreeing on one card.</div>`; }
+
+  if(s.celtic){
+    html+=`<div class="sect">THE CROSSING</div>`;
+    html+=chainBlock(cards[0],cards[1],shortName(cards[0]),shortName(cards[1]));
+    html+=`<div class="note">Card 2 is laid across Card 1 — not the next beat in a sequence, but a force complicating the whole situation at once.</div>`;
+    html+=resBlock([[cards[0],cards[1]]]);
+
+    html+=`<div class="sect">THE CHRONOLOGICAL SPINE</div>`;
+    html+=`<div class="note">Position order is not story order. The Cross runs Beneath → Behind → Covers → Before → Crowns, skipping the Challenge entirely.</div>`;
+    const sp=s.spine, spPairs=[];
+    for(let i=0;i<sp.length-1;i++){
+      html+=chainBlock(cards[sp[i]],cards[sp[i+1]],s.positions[sp[i]].n.replace('This Is ','').replace('This ',''),s.positions[sp[i+1]].n.replace('This Is ','').replace('This ',''));
+      spPairs.push([cards[sp[i]],cards[sp[i+1]]]);
+    }
+    html+=resBlock(spPairs);
+
+    html+=`<div class="sect">THE STAFF</div>`;
+    html+=`<div class="note">Stance and Environment are parallel framings of the same moment, not a sequence. Only the Outcome is a true endpoint.</div>`;
+    const stPairs=[];
+    s.staffChain.forEach(([i,j])=>{ html+=chainBlock(cards[i],cards[j],shortName(cards[i]),shortName(cards[j])); stPairs.push([cards[i],cards[j]]); });
+    html+=resBlock(stPairs);
+
+    html+=`<div class="sect">FRAME CHECK</div>`;
+    html+=chainBlock(cards[s.frame[0]],cards[s.frame[1]],'Covers','Outcome');
+    html+=resBlock([[cards[s.frame[0]],cards[s.frame[1]]]]);
+    html+=narrativeSection(cards, s);
+  } else if(s.chain.length){
+    html+=`<div class="sect">DIGNITIES</div>`;
+    const pairs=[];
+    s.chain.forEach(([i,j])=>{
+      html+=chainBlock(cards[i],cards[j], s.positions.length>1?s.positions[i].n:shortName(cards[i]), s.positions.length>1?s.positions[j].n:shortName(cards[j]));
+      pairs.push([cards[i],cards[j]]);
+    });
+    html+=resBlock(pairs);
+    html+=narrativeSection(cards, s);
+  } else {
+    html+=narrativeSection(cards, s);
+  }
+  return html;
+}
+
+/* ---------- spreads ---------- */
+const SPREADS = {
+  two:{label:'Two-Card',positions:[{n:'First',q:''},{n:'Second',q:''}],chain:[[0,1]],detailed:true,rows:[[0,1]]},
+  ppf:{label:'Past \u00b7 Present \u00b7 Future',positions:[{n:'Past',q:'What came before.'},{n:'Present',q:'Where things stand.'},{n:'Future',q:'Where they are heading.'}],chain:[[0,1],[1,2]],detailed:true,rows:[[0,1,2]]},
+  sao:{label:'Situation \u00b7 Action \u00b7 Outcome',positions:[{n:'Situation',q:'The honest state of things.'},{n:'Action',q:'What is called for.'},{n:'Outcome',q:'Where this leads.'}],chain:[[0,1],[1,2]],detailed:true,rows:[[0,1,2]]},
+  five:{label:'5-Card Horseshoe',positions:[{n:'Past',q:'What came before.'},{n:'Present',q:'Where things stand.'},{n:'Hidden Influences',q:'What is shaping this unseen.'},{n:'Attitude / Obstacles',q:'How you are meeting it.'},{n:'Outcome',q:'Where this is heading.'}],chain:[[0,1],[1,2],[2,3],[3,4]],detailed:false,rows:[[0,1,2],[3,4]]},
+  seven:{label:'7-Card Horseshoe',positions:[{n:'Past Influences',q:'What came before.'},{n:'Present Situation',q:'Where things stand.'},{n:'Near Future',q:'The next development.'},{n:'Best Course of Action',q:'What is called for.'},{n:'External Influences',q:'What acts on this from outside.'},{n:'Hopes or Fears',q:'What stirs beneath the surface.'},{n:'Outcome',q:'Where this is heading.'}],chain:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]],detailed:false,rows:[[0,1,2,3],[4,5,6]]},
+  celtic:{label:'Celtic Cross',celtic:true,detailed:false,positions:[
+    {n:'This Covers Him',q:'The heart of the matter.',grp:'THE CROSS'},
+    {n:'This Crosses Him',q:'The obstacle, laid across the whole situation.',grp:'THE CROSS'},
+    {n:'This Is Beneath Him',q:'The foundation it is built on.',grp:'THE CROSS'},
+    {n:'This Is Behind Him',q:'The recent past, now fading.',grp:'THE CROSS'},
+    {n:'This Crowns Him',q:'The conscious goal, or best achievable outcome.',grp:'THE CROSS'},
+    {n:'This Is Before Him',q:'The near future.',grp:'THE CROSS'},
+    {n:'His Stance',q:'How you are showing up.',grp:'THE STAFF'},
+    {n:'Environment',q:'Others, surroundings, what is outside your control.',grp:'THE STAFF'},
+    {n:'Hopes or Fears',q:'What stirs beneath the surface.',grp:'THE STAFF'},
+    {n:'Final Outcome',q:'Where all of it is heading.',grp:'THE STAFF'}],
+    spine:[2,3,0,5,4], staffChain:[[6,7],[7,8],[8,9]], frame:[0,9]},
+  custom:{label:'Custom spread\u2026',custom:true,positions:[],chain:[],detailed:true}
+};
+
+let mode='ppf';
+let customPositions=[{n:'Position 1'},{n:'Position 2'}];
+const slotsEl=document.getElementById('slots');
+const builderEl=document.getElementById('builder');
+const matEl=document.getElementById('mat');
+const spreadOutEl=document.getElementById('spreadOut');
+
+/* current spread, resolving the custom builder into a real spread object */
+function activeSpread(){
+  if(mode!=='custom') return SPREADS[mode];
+  const n=customPositions.length, chain=[];
+  for(let i=0;i<n-1;i++) chain.push([i,i+1]);
+  const idxs=customPositions.map((_,i)=>i), rows=[];
+  for(let i=0;i<idxs.length;i+=4) rows.push(idxs.slice(i,i+4));
+  return {label:'Custom', positions:customPositions.map(p=>({n:p.n||'Unlabelled',q:''})), chain, detailed:n<=3, rows};
+}
+
+/* ---------- search: names + Arabic numerals ---------- */
+const ARABIC_TO_MAJOR={};
+DECK.filter(c=>c.kind==='major').forEach(c=>{
+  const romanMap={'0':0,'I':1,'II':2,'III':3,'IV':4,'V':5,'VI':6,'VII':7,'VIII':8,'IX':9,'X':10,
+    'XI':11,'XII':12,'XIII':13,'XIV':14,'XV':15,'XVI':16,'XVII':17,'XVIII':18,'XIX':19,'XX':20,'XXI':21};
+  const v=romanMap[c.numeral];
+  if(v!==undefined) ARABIC_TO_MAJOR[v]=c;
+});
+function suitTag(c){ return c.kind==='major' ? 'MAJ' : c.suit.slice(0,4).toUpperCase(); }
+function matches(query){
+  const raw=query.trim().toLowerCase();
+  if(!raw) return [];
+  const asNum=/^\d{1,2}$/.test(raw)?parseInt(raw,10):null;
+  const numWord=(asNum!==null && RANKNAME[asNum])?RANKNAME[asNum].toLowerCase():null;
+  const starts=[], contains=[];
+  if(asNum!==null && ARABIC_TO_MAJOR[asNum]) starts.push(ARABIC_TO_MAJOR[asNum]);
+  DECK.forEach(c=>{
+    if(starts.indexOf(c)!==-1) return;
+    const n=c.name.toLowerCase();
+    const numeral=c.kind==='major'?c.numeral.toLowerCase():'';
+    const hitStart = n.startsWith(raw) || (numWord && n.startsWith(numWord)) || (numeral && numeral===raw);
+    const hitContain = !hitStart && (n.includes(raw) || (numWord && n.includes(numWord)));
+    if(hitStart) starts.push(c); else if(hitContain) contains.push(c);
+  });
+  return [...starts,...contains].slice(0,9);
+}
+function attachAutocomplete(input, list, onChoose){
+  let hiIndex=-1, items=[];
+  function render(q){
+    items=matches(q); hiIndex=-1;
+    if(!items.length){ list.classList.remove('open'); list.innerHTML=''; return; }
+    list.innerHTML=items.map((c,i)=>`<div class="ac-item" data-i="${i}"><span class="grp">${suitTag(c)}</span>${c.kind==='major'?c.numeral+' ':''}${c.name}</div>`).join('');
+    list.classList.add('open');
+    [...list.children].forEach(el=>{ el.addEventListener('mousedown', e=>{ e.preventDefault(); choose(items[+el.dataset.i]); }); });
+  }
+  function choose(c){
+    input.value=c.name; input.dataset.cardid=c.id; input.classList.remove('invalid');
+    list.classList.remove('open'); list.innerHTML='';
+    if(onChoose) onChoose(c);
+  }
+  input.addEventListener('input', ()=>{ input.dataset.cardid=''; input.classList.remove('invalid'); render(input.value); });
+  input.addEventListener('keydown', e=>{
+    if(!list.classList.contains('open')){
+      if(e.key==='Enter'){
+        e.preventDefault();
+        const exact=BY_NAME_LOWER[input.value.trim().toLowerCase()];
+        if(exact) choose(exact);
+      }
+      return;
+    }
+    if(e.key==='ArrowDown'){ e.preventDefault(); hiIndex=Math.min(hiIndex+1,items.length-1); highlight(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); hiIndex=Math.max(hiIndex-1,0); highlight(); }
+    else if(e.key==='Enter'){ e.preventDefault(); if(items.length) choose(items[hiIndex>=0?hiIndex:0]); }
+    else if(e.key==='Escape'){ list.classList.remove('open'); }
+  });
+  function highlight(){
+    [...list.children].forEach((el,i)=>el.classList.toggle('hi', i===hiIndex));
+    const el=list.children[hiIndex]; if(el) el.scrollIntoView({block:'nearest'});
+  }
+  input.addEventListener('blur', ()=>{
+    setTimeout(()=>{
+      list.classList.remove('open');
+      if(!input.dataset.cardid){
+        const exact=BY_NAME_LOWER[input.value.trim().toLowerCase()];
+        if(exact){ input.dataset.cardid=exact.id; input.value=exact.name; choose(exact); }
+        else if(input.value.trim()){ input.classList.add('invalid'); }
+      }
+    },120);
+  });
+}
+
+function pressFx(btn){
+  btn.classList.remove('pressed'); void btn.offsetWidth; btn.classList.add('pressed');
+  setTimeout(()=>btn.classList.remove('pressed'), 520);
+}
+function randomCards(n){
+  const pool=[...DECK], out=[];
+  for(let i=0;i<n;i++) out.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  return out;
+}
+function flipFace(front, imgPath, name){
+  front.innerHTML = imgPath ? `<img src="${imgPath}" alt="${name}" loading="lazy">` : `<div style="padding:14px;text-align:center;font-size:11px;">${name}</div>`;
+}
+function slotHTML(i){
+  return `<div class="cardSlot" data-i="${i}">
+    <div class="cardFace back"><img src="./cards/card_back.png" alt="Card back" loading="lazy"></div>
+    <div class="cardFace front"></div>
+  </div>`;
+}
+
+/* ---------- 78-card picker overlay ---------- */
+const pickerOverlay=document.getElementById('pickerOverlay');
+const pickerGrid=document.getElementById('pickerGrid');
+let pickerCallback=null;
+(function buildPickerGrid(){
+  const groups=[['Major Arcana',DECK.filter(c=>c.kind==='major')],
+    ['Wands',DECK.filter(c=>c.suit==='Wands')],['Cups',DECK.filter(c=>c.suit==='Cups')],
+    ['Swords',DECK.filter(c=>c.suit==='Swords')],['Pentacles',DECK.filter(c=>c.suit==='Pentacles')]];
+  let html='';
+  groups.forEach(([label,cards])=>{
+    html+=`<div class="grpHead">${label}</div>`;
+    cards.forEach(c=>{
+      html+=`<div class="pickCard" data-id="${c.id}">
+        <img src="${cardImagePath(c)}" alt="${c.name}" loading="lazy">
+        <div class="pn">${c.kind==='major'?c.numeral+' ':''}${c.name}</div>
+      </div>`;
+    });
+  });
+  pickerGrid.innerHTML=html;
+  pickerGrid.querySelectorAll('.pickCard').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const c=BY_ID[el.dataset.id];
+      closePicker();
+      if(pickerCallback) pickerCallback(c);
+    });
+  });
+})();
+function openPicker(cb){ pickerCallback=cb; pickerOverlay.classList.add('open'); }
+function closePicker(){ pickerOverlay.classList.remove('open'); pickerCallback=null; }
+document.getElementById('pickerClose').onclick=closePicker;
+
+/* ---------- tab: 1 Card ---------- */
+const soloSlot=document.getElementById('soloSlot');
+const soloFront=document.getElementById('soloFront');
+const soloInput=document.getElementById('soloInput');
+const soloOut=document.getElementById('soloOut');
+
+function setSoloCard(c){
+  flipFace(soloFront, cardImagePath(c), c.name);
+  soloSlot.classList.add('flipped');
+  soloInput.value=c.name; soloInput.dataset.cardid=c.id; soloInput.classList.remove('invalid');
+  soloOut.innerHTML=buildResultsHTML([c], {label:'Single Card',positions:[{n:'The Card',q:''}],chain:[],detailed:true}, {skipImg:true});
+  soloOut.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+soloSlot.addEventListener('click', ()=>openPicker(setSoloCard));
+attachAutocomplete(soloInput, document.getElementById('soloList'), setSoloCard);
+document.getElementById('soloRandom').onclick=()=>{ setSoloCard(randomCards(1)[0]); };
+
+/* ---------- tab: Quiz Me ---------- */
+let quizPool=[], quizCard=null;
+const quizSlot=document.getElementById('quizSlot');
+const quizFront=document.getElementById('quizFront');
+const quizName=document.getElementById('quizName');
+const quizReveal=document.getElementById('quizReveal');
+const quizMeaning=document.getElementById('quizMeaning');
+
+function reshuffle(){ quizPool=[...DECK].sort(()=>Math.random()-0.5); }
+function armQuizCard(){
+  if(!quizPool.length) reshuffle();
+  quizCard=quizPool.pop();
+  quizSlot.classList.remove('flipped');
+  quizName.textContent=''; quizMeaning.innerHTML=''; quizReveal.hidden=true;
+  document.getElementById('quizCount').textContent=(DECK.length-quizPool.length)+' of '+DECK.length+' this pass';
+}
+function flipQuizCard(){
+  if(quizSlot.classList.contains('flipped')) return;
+  flipFace(quizFront, cardImagePath(quizCard), quizCard.name);
+  quizSlot.classList.add('flipped');
+  quizName.textContent = quizCard.kind==='major' ? quizCard.numeral+' '+quizCard.name : quizCard.name;
+  quizReveal.hidden=false;
+}
+quizSlot.addEventListener('click', flipQuizCard);
+quizReveal.addEventListener('click', (e)=>{
+  pressFx(e.currentTarget);
+  quizMeaning.innerHTML=buildResultsHTML([quizCard], {label:'Single Card',positions:[{n:'',q:''}],chain:[],detailed:true}, {skipImg:true});
+  quizReveal.hidden=true;
+});
+document.getElementById('quizNext').onclick=(e)=>{ pressFx(e.currentTarget); armQuizCard(); };
+document.getElementById('quizReshuffle').onclick=()=>{ reshuffle(); armQuizCard(); };
+
+/* ---------- tab: Spreads ---------- */
+const toggleBtn=document.getElementById('spreadToggle');
+const menuEl=document.getElementById('spreadMenu');
+const curEl=document.getElementById('spreadCurrent');
+Object.entries(SPREADS).forEach(([k,s])=>{
+  const d=document.createElement('div');
+  d.className='spread-opt'; d.textContent=s.label; d.dataset.k=k; d.setAttribute('role','option');
+  d.setAttribute('aria-selected', k===mode);
+  d.onclick=()=>{
+    mode=k; curEl.innerHTML=s.label;
+    [...menuEl.children].forEach(o=>o.setAttribute('aria-selected', o.dataset.k===mode));
+    closeMenu(); buildSpreadUI();
+  };
+  menuEl.appendChild(d);
+});
+function openMenu(){ menuEl.classList.add('open'); toggleBtn.setAttribute('aria-expanded','true'); }
+function closeMenu(){ menuEl.classList.remove('open'); toggleBtn.setAttribute('aria-expanded','false'); }
+toggleBtn.addEventListener('click', ()=>{ menuEl.classList.contains('open')?closeMenu():openMenu(); });
+document.addEventListener('click', e=>{ if(!e.target.closest('.spread-select')) closeMenu(); });
+
+/* positionCards[i] holds the chosen card object for slot i, or null */
+let positionCards=[];
+
+function buildSpreadUI(){
+  const s=activeSpread();
+  positionCards = s.positions.map(()=>null);
+  builderEl.innerHTML='';
+  spreadOutEl.innerHTML='';
+  if(mode==='custom') buildCustom();
+  buildMat(s);
+  buildTextSlots(s);
+}
+
+/* mat: card-back slots laid out to mirror the table position of the spread */
+function buildMat(s){
+  matEl.innerHTML = s.celtic ? celticMatHTML(s) : rowsMatHTML(s);
+  matEl.querySelectorAll('.cardSlot[data-i]').forEach(el=>{
+    const i=+el.dataset.i;
+    el.addEventListener('click', ()=>{
+      if(positionCards[i]) return;
+      openPicker(c=>assignPosition(i,c));
+    });
+  });
+}
+function rowsMatHTML(s){
+  let html='';
+  s.rows.forEach(row=>{
+    html+='<div class="matRow">';
+    row.forEach(i=>{
+      html+=`<div class="matCell">${slotHTML(i)}<div class="slotLabel">${s.positions[i].n}</div></div>`;
+    });
+    html+='</div>';
+  });
+  return html;
+}
+function celticMatHTML(s){
+  const cell=(i,area)=>`<div class="matCell" style="grid-area:${area};">${slotHTML(i)}<div class="slotLabel">${s.positions[i].n}</div></div>`;
+  let html='<div class="matCross">';
+  html+=cell(4,'top');
+  html+=cell(3,'left');
+  html+=`<div class="matCell" style="grid-area:mid;">
+    <div class="matStack">
+      <div class="cardSlot" data-i="0"><div class="cardFace back"><img src="./cards/card_back.png" alt="Card back" loading="lazy"></div><div class="cardFace front"></div></div>
+      <div class="cardSlot stackRot" data-i="1"><div class="cardFace back"><img src="./cards/card_back.png" alt="Card back" loading="lazy"></div><div class="cardFace front"></div></div>
+    </div>
+    <div class="slotLabel">Covers &amp; Crosses</div>
+  </div>`;
+  html+=cell(5,'right');
+  html+=cell(2,'bottom');
+  html+='</div>';
+  html+='<div class="matRow" style="margin-top:36px;">';
+  [6,7,8,9].forEach(i=>{ html+=`<div class="matCell">${slotHTML(i)}<div class="slotLabel">${s.positions[i].n}</div></div>`; });
+  html+='</div>';
+  return html;
+}
+
+function buildTextSlots(s){
+  let html='', lastGrp=null;
+  s.positions.forEach((p,i)=>{
+    if(p.grp && p.grp!==lastGrp){ html+=`<div class="group-label">${p.grp}</div>`; lastGrp=p.grp; }
+    html+=`<div class="slot">
+      <div class="slot-head"><span class="slot-num">${i+1}</span><span class="slot-name">${p.n}</span></div>
+      ${p.q?`<div class="slot-q">${p.q}</div>`:''}
+      <div class="ac-wrap">
+        <input type="text" id="s${i}" class="ac-input" autocomplete="off" spellcheck="false" placeholder="Name a card\u2026" data-cardid="">
+        <div class="ac-list" id="ac${i}"></div>
+      </div>
+    </div>`;
+  });
+  slotsEl.innerHTML=html;
+  s.positions.forEach((p,i)=>{
+    attachAutocomplete(document.getElementById('s'+i), document.getElementById('ac'+i), c=>assignPosition(i,c));
+  });
+}
+
+function buildCustom(){
+  let html='<div class="group-label">Your spread</div>';
+  customPositions.forEach((p,i)=>{
+    html+=`<div class="cust-row">
+      <div class="cust-top">
+        <span class="cust-n">${i+1}</span>
+        <input class="cust-label" id="lab${i}" value="${(p.n||'').replace(/"/g,'&quot;')}" placeholder="Name this position\u2026">
+        <button class="cust-del" data-del="${i}" aria-label="Remove position">&times;</button>
+      </div>
+    </div>`;
+  });
+  html+=`<div class="builder-actions"><button class="act ghost" id="addPos">Add a position</button></div>`;
+  builderEl.innerHTML=html;
+  customPositions.forEach((p,i)=>{
+    document.getElementById('lab'+i).addEventListener('input', e=>{
+      customPositions[i].n=e.target.value;
+      buildMat(activeSpread());
+      buildTextSlots(activeSpread());
+      positionCards.forEach((c,idx)=>{ if(c) reflectAssignment(idx,c); });
+    });
+  });
+  builderEl.querySelectorAll('[data-del]').forEach(b=>{
+    b.onclick=()=>{
+      if(customPositions.length<=1) return;
+      customPositions.splice(+b.dataset.del,1);
+      buildSpreadUI();
+    };
+  });
+  document.getElementById('addPos').onclick=()=>{
+    customPositions=[...customPositions,{n:'Position '+(customPositions.length+1)}];
+    buildSpreadUI();
+  };
+}
+
+function reflectAssignment(i,c){
+  const matSlot=matEl.querySelector(`.cardSlot[data-i="${i}"]`);
+  if(matSlot){
+    flipFace(matSlot.querySelector('.cardFace.front'), cardImagePath(c), c.name);
+    matSlot.classList.add('flipped');
+  }
+  const input=document.getElementById('s'+i);
+  if(input){ input.value=c.name; input.dataset.cardid=c.id; input.classList.remove('invalid'); }
+}
+function assignPosition(i, c){
+  positionCards[i]=c;
+  reflectAssignment(i,c);
+  maybeRenderSpread();
+}
+
+function maybeRenderSpread(){
+  const s=activeSpread();
+  if(positionCards.some(c=>!c)){ spreadOutEl.innerHTML=''; return; }
+  spreadOutEl.innerHTML=buildResultsHTML(positionCards, s);
+  spreadOutEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+document.getElementById('spreadRandom').onclick=()=>{
+  const s=activeSpread();
+  const cards=randomCards(s.positions.length);
+  cards.forEach((c,i)=>assignPosition(i,c));
+};
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected', x===t));
+    document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.id==='pane-'+t.dataset.pane));
+    if(t.dataset.pane==='quiz' && !quizCard) armQuizCard();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+
+/* ---------- masthead element loop ---------- */
+['Fire','Water','Air','Earth'].forEach((el,i)=>{
+  document.querySelector('.sl-'+(i+1)).innerHTML = glyph(el, 19);
+});
+
+buildSpreadUI();
+
+/* ---------- home-screen install hint ---------- */
+(function(){
+  var isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  var box = document.getElementById('installHint');
+  if (!box || isStandalone) return;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  function render(text, actionLabel, onAction){
+    box.innerHTML = '<div class="install-hint"><span class="txt">'+text+'</span></div>';
+    var el = box.querySelector('.install-hint');
+    if (actionLabel){
+      var btn = document.createElement('button');
+      btn.textContent = actionLabel; btn.onclick = onAction; el.appendChild(btn);
+    }
+    var x = document.createElement('button');
+    x.className='x'; x.textContent='\u00d7'; x.setAttribute('aria-label','Dismiss');
+    x.onclick=function(){ box.innerHTML=''; };
+    el.appendChild(x);
+  }
+  var deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); deferredPrompt=e;
+    render('<b>Install this app</b> for one-tap access from your home screen.', 'Add', function(){
+      box.innerHTML=''; deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function(){ deferredPrompt=null; });
+    });
+  });
+  if (isIOS) render('<b>Add to Home Screen:</b> tap Share, then "Add to Home Screen."', null, null);
+})();
+
+if ('serviceWorker' in navigator){
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>
