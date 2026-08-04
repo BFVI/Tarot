@@ -158,6 +158,18 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .note{font-size:11.5px;color:var(--fg-dim);padding:10px 12px;border-left:2px solid var(--line-dim);margin-bottom:10px;line-height:1.55;}
 .reading{border-left:2px solid var(--fg);padding:4px 16px 4px 15px;margin-bottom:10px;}
 .reading p{font-size:13.5px;line-height:1.75;color:var(--fg);}
+
+/* ---------- solo card: combined black info block ---------- */
+.soloInfo{background:#000;border:1px solid var(--line-dim);border-radius:12px;padding:22px 16px;margin-top:20px;}
+.soloInfo-title{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
+  font-size:clamp(26px,8vw,36px);text-align:center;line-height:1.15;margin-bottom:3px;}
+.soloInfo-subtitle{text-align:center;font-size:11px;color:var(--fg-dim);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:18px;}
+.soloInfo-attrs{justify-content:center;margin-bottom:18px;}
+.soloInfo-attrs .attr{border-radius:7px;}
+.soloInfo-numTheme{text-align:center;margin-bottom:14px;}
+.soloInfo-meaning{font-size:14.5px;font-weight:600;line-height:1.6;margin-bottom:20px;}
+.soloInfo-reading{margin-bottom:0;}
 .reading p + p{margin-top:12px;}
 
 /* ---------- draw animation ---------- */
@@ -221,10 +233,10 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .pane{display:none;} .pane.on{display:block;}
 #pane-read{position:relative;}
 .panoBg{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;
-  opacity:0;transition:opacity 1.1s ease;pointer-events:none;}
+  opacity:0;transition:opacity 1.1s ease;pointer-events:none;filter:brightness(1.125);}
 .panoBg.on{opacity:.55;}
 .panoBg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35);}
-#pane-read > *:not(.panoBg){position:relative;z-index:1;}
+#pane-read > *:not(.panoBg), #pane-quiz > *:not(.panoBg){position:relative;z-index:1;}
 @media (prefers-reduced-motion:reduce){ .panoBg{transition:none;} }
 
 /* ---------- card slot (shared: solo + quiz + spread positions) ---------- */
@@ -245,9 +257,10 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){ .cardFace{transition:none;} }
 
 /* ---------- home card: cross mat + scale-zoom breathing with table shadow ---------- */
-.crossStage{position:relative;width:min(90vw,460px);margin:0 auto;}
-.crossImg{display:block;width:100%;height:auto;pointer-events:none;user-select:none;}
-.crossStage .cardSlot{position:absolute;top:32.68%;left:50%;}
+.crossStage{position:relative;width:100%;max-width:300px;height:340px;margin:0 auto;}
+.crossImg{position:absolute;top:50%;left:50%;width:224px;height:224px;
+  transform:translate(-50%,-50%);pointer-events:none;user-select:none;opacity:.92;}
+.crossStage .cardSlot{position:absolute;top:50%;left:50%;}
 #soloSlot{border-radius:8px;transform-origin:center center;
   animation:cardBreathe 4.6s ease-in-out infinite;}
 @keyframes cardBreathe{
@@ -261,7 +274,6 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 
 /* ---------- quiz ---------- */
 .quiz-count{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);text-align:center;margin-bottom:10px;}
-.quizName{text-align:center;font-size:15px;font-weight:600;margin:16px 0 4px;min-height:20px;}
 #quizMeaning{margin-top:6px;}
 
 /* ---------- picker (full 78 cards) ---------- */
@@ -323,7 +335,7 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
   <div class="pane on" id="pane-read">
     <div class="panoBg" id="panoBg"></div>
     <div class="crossStage" id="crossStage">
-      <img src="./mat/cross-mat.png" class="crossImg" alt="" aria-hidden="true">
+      <img src="./pentagram.png" class="crossImg" alt="" aria-hidden="true">
       <div class="cardSlot big" id="soloSlot" data-empty="1">
         <div class="cardFace back" id="soloBack">
           <img src="./cards/card_back.png" alt="Card back" loading="lazy">
@@ -346,8 +358,10 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 
   <!-- QUIZ ME -->
   <div class="pane" id="pane-quiz">
+    <div class="panoBg" id="quizPanoBg"></div>
     <div class="quiz-count" id="quizCount"></div>
-    <div class="table">
+    <div class="crossStage">
+      <img src="./pentagram.png" class="crossImg" alt="" aria-hidden="true">
       <div class="cardSlot big" id="quizSlot" data-empty="1">
         <div class="cardFace back" id="quizBack">
           <img src="./cards/card_back.png" alt="Card back" loading="lazy">
@@ -355,10 +369,10 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
         <div class="cardFace front" id="quizFront"></div>
       </div>
     </div>
-    <div class="quizName" id="quizName"></div>
+    <button class="act primary" id="quizStart">Start</button>
     <button class="act primary" id="quizReveal" hidden>Reveal Meaning</button>
     <div id="quizMeaning"></div>
-    <button class="act ghost" id="quizNext" style="margin-top:10px;">Next Card</button>
+    <button class="act ghost" id="quizDrawAgain" hidden>Draw Again</button>
     <button class="subtle" id="quizReshuffle">Reshuffle deck</button>
   </div>
 
@@ -746,6 +760,18 @@ function narrateBrief(cards){
   s+= ` If you need the line to hold onto walking away: it starts as ${shortLead(cards[0])}, and — carried through everything above — ends up at ${shortLead(cards[cards.length-1])}.`;
   return `<p>${s}</p>`;
 }
+function buildSoloResultHTML(c){
+  const nameLine = c.kind==='major' ? c.numeral+' '+c.name : c.name;
+  let html = `<div class="soloInfo">`;
+  html += `<div class="soloInfo-title">${nameLine}</div>`;
+  if(c.title) html += `<div class="soloInfo-subtitle">${c.title}</div>`;
+  html += attrs(c).replace('class="attrs"','class="attrs soloInfo-attrs"');
+  if(c.kind==='pip') html += `<div class="mean soloInfo-numTheme"><span class="rest">Number ${c.num}: ${c.numTheme}</span></div>`;
+  html += meanHTML(c).replace('class="mean"','class="mean soloInfo-meaning"');
+  html += `<div class="reading soloInfo-reading">${narrateSingle(c)}</div>`;
+  html += `</div>`;
+  return html;
+}
 function narrativeSection(cards, spread){
   const s=spread||activeSpread();
   let body;
@@ -977,8 +1003,8 @@ function setSoloCard(c){
   flipFace(soloFront, cardImagePath(c), c.name);
   soloSlot.classList.add('flipped');
   soloInput.value=c.name; soloInput.dataset.cardid=c.id; soloInput.classList.remove('invalid');
-  soloOut.innerHTML=buildResultsHTML([c], {label:'Single Card',positions:[{n:'The Card',q:''}],chain:[],detailed:true}, {skipImg:true});
-  soloOut.scrollIntoView({behavior:'smooth',block:'nearest'});
+  soloOut.innerHTML=buildSoloResultHTML(c);
+  window.scrollTo({top:0,behavior:'smooth'});
   const pano=cardPanoPath(c);
   if(pano){ panoBg.style.backgroundImage=`url('${pano}')`; panoBg.classList.add('on'); }
   else{ panoBg.classList.remove('on'); }
@@ -999,33 +1025,45 @@ document.getElementById('soloReset').onclick=(e)=>{ pressFx(e.currentTarget); re
 let quizPool=[], quizCard=null;
 const quizSlot=document.getElementById('quizSlot');
 const quizFront=document.getElementById('quizFront');
-const quizName=document.getElementById('quizName');
 const quizReveal=document.getElementById('quizReveal');
 const quizMeaning=document.getElementById('quizMeaning');
+const quizStart=document.getElementById('quizStart');
+const quizDrawAgain=document.getElementById('quizDrawAgain');
+const quizPanoBg=document.getElementById('quizPanoBg');
 
 function reshuffle(){ quizPool=[...DECK].sort(()=>Math.random()-0.5); }
 function armQuizCard(){
   if(!quizPool.length) reshuffle();
   quizCard=quizPool.pop();
-  quizSlot.classList.remove('flipped');
-  quizName.textContent=''; quizMeaning.innerHTML=''; quizReveal.hidden=true;
   document.getElementById('quizCount').textContent=(DECK.length-quizPool.length)+' of '+DECK.length+' this pass';
 }
-function flipQuizCard(){
-  if(quizSlot.classList.contains('flipped')) return;
+function revealQuizCard(){
+  armQuizCard();
   flipFace(quizFront, cardImagePath(quizCard), quizCard.name);
   quizSlot.classList.add('flipped');
-  quizName.textContent = quizCard.kind==='major' ? quizCard.numeral+' '+quizCard.name : quizCard.name;
-  quizReveal.hidden=false;
+  const pano=cardPanoPath(quizCard);
+  if(pano){ quizPanoBg.style.backgroundImage=`url('${pano}')`; quizPanoBg.classList.add('on'); }
+  else{ quizPanoBg.classList.remove('on'); }
+  quizMeaning.innerHTML='';
+  quizStart.hidden=true; quizDrawAgain.hidden=true; quizReveal.hidden=false;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-quizSlot.addEventListener('click', flipQuizCard);
+function resetQuizToStart(){
+  quizSlot.classList.remove('flipped');
+  quizFront.innerHTML='';
+  quizPanoBg.classList.remove('on');
+  quizMeaning.innerHTML='';
+  quizStart.hidden=false; quizReveal.hidden=true; quizDrawAgain.hidden=true;
+}
+quizSlot.addEventListener('click', ()=>{ if(!quizSlot.classList.contains('flipped')) revealQuizCard(); });
+quizStart.addEventListener('click', (e)=>{ pressFx(e.currentTarget); revealQuizCard(); });
 quizReveal.addEventListener('click', (e)=>{
   pressFx(e.currentTarget);
-  quizMeaning.innerHTML=buildResultsHTML([quizCard], {label:'Single Card',positions:[{n:'',q:''}],chain:[],detailed:true}, {skipImg:true});
-  quizReveal.hidden=true;
+  quizMeaning.innerHTML=buildSoloResultHTML(quizCard);
+  quizReveal.hidden=true; quizDrawAgain.hidden=false;
 });
-document.getElementById('quizNext').onclick=(e)=>{ pressFx(e.currentTarget); armQuizCard(); };
-document.getElementById('quizReshuffle').onclick=()=>{ reshuffle(); armQuizCard(); };
+quizDrawAgain.addEventListener('click', (e)=>{ pressFx(e.currentTarget); revealQuizCard(); });
+document.getElementById('quizReshuffle').onclick=()=>{ reshuffle(); resetQuizToStart(); };
 
 /* ---------- tab: Spreads ---------- */
 const toggleBtn=document.getElementById('spreadToggle');
@@ -1189,7 +1227,7 @@ document.querySelectorAll('.tab').forEach(t=>{
   t.onclick=()=>{
     document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected', x===t));
     document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.id==='pane-'+t.dataset.pane));
-    if(t.dataset.pane==='quiz' && !quizCard) armQuizCard();
+    if(t.dataset.pane==='quiz' && !quizCard) resetQuizToStart();
     window.scrollTo({top:0,behavior:'smooth'});
   };
 });
