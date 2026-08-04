@@ -46,7 +46,7 @@ h1{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
 
 /* ---------- shared controls ---------- */
 .ac-wrap{position:relative;}
-.ac-input{width:100%;background:rgba(0,0,0,.82);color:var(--fg);border:1px solid var(--line-dim);padding:11px 12px;font-family:inherit;font-size:16px;caret-color:#fff;text-align:center;}
+.ac-input{width:100%;background:rgba(0,0,0,.82);color:var(--fg);border:1px solid var(--line-dim);padding:16px 20px;font-family:inherit;font-size:17px;caret-color:#fff;text-align:center;border-radius:999px;}
 .fakeCaret{position:absolute;left:50%;top:50%;width:2px;height:17px;background:#fff;
   transform:translate(-50%,-50%);pointer-events:none;animation:caretBlink 1s step-end infinite;}
 .ac-input:not(:placeholder-shown) ~ .fakeCaret{display:none;}
@@ -77,8 +77,8 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .subtle{display:block;width:100%;background:none;border:none;color:var(--fg-dim);font-family:inherit;
   font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:12px 4px 2px;cursor:pointer;text-align:center;}
 .subtle:hover{color:var(--fg);}
-.solo-actions{display:flex;gap:8px;}
-.solo-actions button.act{width:auto;flex:1;}
+.solo-actions{display:flex;gap:12px;justify-content:center;margin-top:22px;}
+.solo-actions button.act{width:auto;flex:0 0 auto;padding-left:28px;padding-right:28px;}
 .solo-actions .subtle{width:auto;flex:1;}
 
 /* ---------- interpret tab ---------- */
@@ -160,9 +160,10 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 .reading p{font-size:13.5px;line-height:1.75;color:var(--fg);}
 
 /* ---------- solo card: combined black info block ---------- */
-.soloInfo{background:rgba(0,0,0,.82);border:1px solid var(--line-dim);border-radius:12px;padding:22px 16px;margin-top:20px;width:168px;margin-left:auto;margin-right:auto;}
+.soloInfo{background:rgba(0,0,0,.82);border:1px solid var(--line-dim);border-radius:12px;padding:22px 16px;margin-top:20px;width:min(80vw,360px);margin-left:auto;margin-right:auto;}
 .soloInfo-title{font-family:'Manufacturing Consent','IBM Plex Mono',serif;font-weight:400;
-  font-size:clamp(38px,13vw,58px);text-align:center;line-height:1.05;margin-bottom:8px;}
+  font-size:clamp(38px,13vw,58px);text-align:center;line-height:1.05;margin-bottom:8px;
+  white-space:nowrap;overflow:hidden;}
 .soloInfo-subtitle{text-align:center;font-size:11px;color:var(--fg-dim);letter-spacing:.1em;
   text-transform:uppercase;margin-bottom:18px;}
 .soloInfo-attrs{justify-content:center;margin-bottom:18px;}
@@ -190,7 +191,7 @@ button:focus-visible{outline:1px solid var(--fg);outline-offset:2px;}
 
 /* ---------- card slot (shared: solo + quiz + spread positions) ---------- */
 .cardSlot{position:relative;width:150px;height:250px;perspective:1200px;cursor:pointer;flex:0 0 auto;}
-.cardSlot.big{width:min(80vw,360px);aspect-ratio:3/5;}
+.cardSlot.big{width:min(80vw,360px);height:auto;aspect-ratio:3/5;}
 .mainCol{width:min(80vw,360px);margin-left:auto;margin-right:auto;}
 .cardFace{position:absolute;inset:0;border-radius:8px;border:1px solid var(--line-dim);overflow:hidden;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .55s cubic-bezier(.3,.85,.3,1);
@@ -948,11 +949,23 @@ const soloInput=document.getElementById('soloInput');
 const soloOut=document.getElementById('soloOut');
 
 const panoBg=document.getElementById('panoBg');
+function fitTitleToWidth(container){
+  const el = container.querySelector('.soloInfo-title');
+  if(!el) return;
+  let size = parseFloat(getComputedStyle(el).fontSize);
+  const minSize = 22;
+  el.style.fontSize = size+'px';
+  while(el.scrollWidth > el.clientWidth && size > minSize){
+    size -= 2;
+    el.style.fontSize = size+'px';
+  }
+}
 function setSoloCard(c){
   flipFace(soloFront, cardImagePath(c), c.name);
   soloSlot.classList.add('flipped');
   soloInput.value=c.name; soloInput.dataset.cardid=c.id; soloInput.classList.remove('invalid');
   soloOut.innerHTML=buildSoloResultHTML(c);
+  fitTitleToWidth(soloOut);
   window.scrollTo({top:0,behavior:'smooth'});
   const pano=cardPanoPath(c);
   if(pano){ panoBg.style.backgroundImage=`url('${pano}')`; panoBg.classList.add('on'); }
@@ -1009,6 +1022,7 @@ quizStart.addEventListener('click', (e)=>{ pressFx(e.currentTarget); revealQuizC
 quizReveal.addEventListener('click', (e)=>{
   pressFx(e.currentTarget);
   quizMeaning.innerHTML=buildSoloResultHTML(quizCard);
+  fitTitleToWidth(quizMeaning);
   quizReveal.hidden=true; quizDrawAgain.hidden=false;
 });
 quizDrawAgain.addEventListener('click', (e)=>{ pressFx(e.currentTarget); revealQuizCard(); });
